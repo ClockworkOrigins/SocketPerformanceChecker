@@ -35,14 +35,4 @@ else
 fi
 
 ./build-boost.sh
-./build-bullet.sh
-./build-ois.sh
-./build-ogre.sh		# depends on boost and ois
-./build-cegui.sh	# depends on ois, ogre and boost
-./build-gperftools.sh
-./build-gmock.sh
-./build-tinyxml.sh
 ./build-clockUtils.sh
-./build-openalsoft.sh
-#./build-m2etis.sh	# depends on boost; not usable until m2etis is published as well
-
