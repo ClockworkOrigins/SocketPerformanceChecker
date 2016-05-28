@@ -75,8 +75,8 @@ ELSE()
 ENDIF()
 
 # Setting current version
-SET(VERSION_MAJOR 1)
-SET(VERSION_MINOR 0)
+SET(VERSION_MAJOR 0)
+SET(VERSION_MINOR 8)
 SET(VERSION_PATCH 0)
 
 #########################################################################
@@ -183,6 +183,8 @@ set(INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}" CACHE PATH "The subdirectory t
 
 include_directories(${CMAKE_BINARY_DIR}/include/)
 
+configure_file(${CMAKE_SOURCE_DIR}/config/spcBuildSettings.h.in ${CMAKE_BINARY_DIR}/include/spcBuildSettings.h @ONLY)
+
 ADD_SUBDIRECTORY(src)
 
 IF(WIN32)
@@ -190,6 +192,32 @@ IF(WIN32)
 	foreach(filename ${files})
 		execute_process(COMMAND ${CMAKE_COMMAND} -E copy_if_different ${filename} ${CMAKE_BINARY_DIR}/bin)
 	endforeach()
+
+	file(GLOB_RECURSE files "$ENV{Qt5_DIR}/bin/icudt*.dll")
+	foreach(filename ${files})
+		get_filename_component(filename ${filename} NAME)
+		configure_file($ENV{Qt5_DIR}/bin/${filename} ${CMAKE_BINARY_DIR}/bin/${filename} COPYONLY)
+	endforeach()
+
+	file(GLOB_RECURSE files "$ENV{Qt5_DIR}/bin/icuin*.dll")
+	foreach(filename ${files})
+		get_filename_component(filename ${filename} NAME)
+		configure_file($ENV{Qt5_DIR}/bin/${filename} ${CMAKE_BINARY_DIR}/bin/${filename} COPYONLY)
+	endforeach()
+
+	file(GLOB_RECURSE files "$ENV{Qt5_DIR}/bin/icuuc*.dll")
+	foreach(filename ${files})
+		get_filename_component(filename ${filename} NAME)
+		configure_file($ENV{Qt5_DIR}/bin/${filename} ${CMAKE_BINARY_DIR}/bin/${filename} COPYONLY)
+	endforeach()
+
+	configure_file($ENV{Qt5_DIR}/bin/libEGL.dll ${CMAKE_BINARY_DIR}/bin/libEGL.dll COPYONLY)
+	configure_file($ENV{Qt5_DIR}/bin/libGLESv2.dll ${CMAKE_BINARY_DIR}/bin/libGLESv2.dll COPYONLY)
+	configure_file($ENV{Qt5_DIR}/bin/Qt5Core.dll ${CMAKE_BINARY_DIR}/bin/Qt5Core.dll COPYONLY)
+	configure_file($ENV{Qt5_DIR}/bin/Qt5Gui.dll ${CMAKE_BINARY_DIR}/bin/Qt5Gui.dll COPYONLY)
+	configure_file($ENV{Qt5_DIR}/bin/Qt5Widgets.dll ${CMAKE_BINARY_DIR}/bin/Qt5Widgets.dll COPYONLY)
+
+	configure_file($ENV{Qt5_DIR}/plugins/platforms/qwindows.dll ${CMAKE_BINARY_DIR}/bin/plugins/platforms/qwindows.dll COPYONLY)
 ENDIF(WIN32)
 
 # set symlinks if it is an out-of-source-build

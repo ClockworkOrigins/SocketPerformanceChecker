@@ -1,5 +1,5 @@
 /*
- * SocketPerformanceTester
+ * SocketPerformanceChecker
  * Copyright (2016) Daniel Bonrath, Michael Baer, All rights reserved.
  *
  * This file is part of i6engine; i6engine is free software; you can redistribute it and/or
@@ -17,30 +17,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __SPC_WIDGETS_MAINWINDOW_H__
-#define __SPC_WIDGETS_MAINWINDOW_H__
+#ifndef __SPC_BUILDSETTINGS_H__
+#define __SPC_BUILDSETTINGS_H__
 
-#include "ui_wndMainWindow.h"
+#define SPC_VERSION_MAJOR @VERSION_MAJOR@
+#define SPC_VERSION_MINOR @VERSION_MINOR@
+#define SPC_VERSION_PATCH @VERSION_PATCH@
 
-namespace spc {
-namespace widgets {
-
-	class MainWindow : public QMainWindow, public Ui::wndMainWindow {
-		Q_OBJECT
-
-	public:
-		MainWindow(QMainWindow * par = nullptr);
-		~MainWindow();
-
-	private slots:
-		void closeTool();
-		void startTest();
-
-	private:
-		void closeEvent(QCloseEvent * evt) override;
-	};
-
-} /* namespace widgets */
-} /* namespace spc */
-
-#endif /* __SPC_WIDGETS_MAINWINDOW_H__ */
+#endif /* __SPC_BUILDSETTINGS_H__ */

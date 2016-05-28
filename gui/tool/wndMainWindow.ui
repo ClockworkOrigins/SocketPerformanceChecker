@@ -20,7 +20,7 @@
    <bool>false</bool>
   </property>
   <property name="windowTitle">
-   <string>DialogCreator</string>
+   <string/>
   </property>
   <property name="autoFillBackground">
    <bool>false</bool>
@@ -37,7 +37,98 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
-     <layout class="QGridLayout" name="gridLayout"/>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="4" column="0">
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="3" column="1">
+         <widget class="QSpinBox" name="portSpinBox">
+          <property name="maximum">
+           <number>65535</number>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="label_4">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Port</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLineEdit" name="ipLineEdit"/>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_3">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>IP</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Message Count</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QSpinBox" name="messageCountSpinBox">
+          <property name="maximum">
+           <number>1000000</number>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_2">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Payload Size</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QSpinBox" name="payloadSizeSpinBox">
+          <property name="maximum">
+           <number>1000000</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="5" column="0">
+       <widget class="QPushButton" name="startButton">
+        <property name="text">
+         <string>Start</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QTableView" name="resultTableView"/>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
@@ -103,8 +194,25 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>startButton</sender>
+   <signal>clicked()</signal>
+   <receiver>wndMainWindow</receiver>
+   <slot>startTest()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>309</x>
+     <y>390</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>309</x>
+     <y>205</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>closeTool()</slot>
+  <slot>startTest()</slot>
  </slots>
 </ui>

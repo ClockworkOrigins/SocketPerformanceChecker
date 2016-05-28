@@ -19,14 +19,45 @@
 
 #include "widgets/MainWindow.h"
 
+#include "spcBuildSettings.h"
+
+#include <QCloseEvent>
+#include <QStandardItemModel>
+
 namespace spc {
 namespace widgets {
 
 	MainWindow::MainWindow(QMainWindow * par) : QMainWindow(par) {
 		setupUi(this);
+
+		setWindowTitle(QString("SocketPerformanceChecker (v ") + QString::number(SPC_VERSION_MAJOR) + QString(".") + QString::number(SPC_VERSION_MINOR) + QString(".") + QString::number(SPC_VERSION_PATCH) + QString(")"));
+
+		QHeaderView * header = new QHeaderView(Qt::Orientation::Horizontal, resultTableView);
+		QStandardItemModel * model = new QStandardItemModel(header);
+		QStringList horizontalHeader;
+		horizontalHeader.append("Socket implementation");
+		horizontalHeader.append("Duration in ms");
+		model->setHorizontalHeaderLabels(horizontalHeader);
+		model->index(0, 0, model->index(1, 1));
+		header->setModel(model);
+		resultTableView->setHorizontalHeader(header);
+		resultTableView->resizeRowsToContents();
+		resultTableView->resizeColumnsToContents();
 	}
 
 	MainWindow::~MainWindow() {
+	}
+
+	void MainWindow::closeTool() {
+		qApp->exit();
+	}
+
+	void MainWindow::startTest() {
+	}
+
+	void MainWindow::closeEvent(QCloseEvent * evt) {
+		closeTool();
+		evt->ignore();
 	}
 
 } /* namespace widgets */
