@@ -45,14 +45,7 @@ call bootstrap.bat
 
 if not exist b2.exe exit /b
 
-IF [%BOOSTARCH%] == [64] (
-	echo using python : 2.7 : %PYTHON_PATH_x64% ; >> user-config.jam
-)
-IF [%BOOSTARCH%] == [32] (
-	echo using python : 2.7 : %PYTHON_PATH_x86% ; >> user-config.jam
-)
-
-b2 --user-config=user-config.jam toolset=%BOOSTCOMPILER% address-model=%BOOSTARCH% --with-atomic --with-date_time --with-filesystem --with-log --with-python --with-regex --with-serialization --with-system --with-thread link=shared threading=multi --layout=system variant=release install --prefix=%PREFIX% stage > NUL
+b2 toolset=%BOOSTCOMPILER% address-model=%BOOSTARCH% --with-serialization link=shared threading=multi --layout=system variant=release install --prefix=%PREFIX% stage > NUL
 
 echo "Cleaning up"
 cd %DEP_DIR%

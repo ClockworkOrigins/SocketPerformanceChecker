@@ -62,7 +62,7 @@ tar xfj "${ARCHIVE}" >/dev/null
 status "Bootstrapping Boost"
 cd "${BUILD_DIR}"
 
-./bootstrap.sh --prefix="${PREFIX}" --with-libraries=atomic,filesystem,thread,date_time,python,system,serialization,log --with-python=python2.7
+./bootstrap.sh --prefix="${PREFIX}" --with-libraries=serialization
 
 status "Building & Installing Boost"
 ./bjam -d2 \
