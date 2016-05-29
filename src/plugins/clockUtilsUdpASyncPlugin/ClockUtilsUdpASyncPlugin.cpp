@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "ClockUtilsUdpSyncPlugin.h"
+#include "ClockUtilsUdpASyncPlugin.h"
 
 #include "clockUtils/sockets/UdpSocket.h"
 
@@ -64,7 +64,7 @@ namespace plugins {
 	}
 
 	void ClockUtilsUdpSocketPlugin::sendMessage(const QString & message) {
-		_testSocket->writePacket(_targetIP, _targetPort, message.toStdString());
+		_testSocket->writePacketAsync(_targetIP, _targetPort, message.toStdString());
 	}
 
 	void ClockUtilsUdpSocketPlugin::waitForMessages(uint32_t messageCount, int32_t timeOut) {
