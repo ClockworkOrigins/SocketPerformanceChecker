@@ -49,8 +49,14 @@
        <layout class="QGridLayout" name="gridLayout_2">
         <item row="4" column="2">
          <widget class="QSpinBox" name="portSpinBox">
+          <property name="minimum">
+           <number>1</number>
+          </property>
           <property name="maximum">
            <number>65535</number>
+          </property>
+          <property name="value">
+           <number>12346</number>
           </property>
          </widget>
         </item>
@@ -68,7 +74,14 @@
          </widget>
         </item>
         <item row="3" column="2">
-         <widget class="QLineEdit" name="ipLineEdit"/>
+         <widget class="QLineEdit" name="ipLineEdit">
+          <property name="inputMask">
+           <string>999.999.999.999</string>
+          </property>
+          <property name="text">
+           <string>127.0.0.1</string>
+          </property>
+         </widget>
         </item>
         <item row="3" column="0">
          <widget class="QLabel" name="label_3">
@@ -98,8 +111,14 @@
         </item>
         <item row="1" column="2">
          <widget class="QSpinBox" name="messageCountSpinBox">
+          <property name="minimum">
+           <number>1</number>
+          </property>
           <property name="maximum">
            <number>1000000</number>
+          </property>
+          <property name="value">
+           <number>10000</number>
           </property>
          </widget>
         </item>
@@ -118,8 +137,14 @@
         </item>
         <item row="2" column="2">
          <widget class="QSpinBox" name="payloadSizeSpinBox">
+          <property name="minimum">
+           <number>1</number>
+          </property>
           <property name="maximum">
            <number>1000000</number>
+          </property>
+          <property name="value">
+           <number>8</number>
           </property>
          </widget>
         </item>
@@ -137,7 +162,20 @@
          </widget>
         </item>
         <item row="0" column="2">
-         <widget class="QSpinBox" name="runsSpinBox"/>
+         <widget class="QSpinBox" name="runsSpinBox">
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>1000</number>
+          </property>
+          <property name="singleStep">
+           <number>1</number>
+          </property>
+          <property name="value">
+           <number>100</number>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>

@@ -36,10 +36,14 @@
 #include <QPluginLoader>
 #include <QStandardItemModel>
 
+#ifdef max
+	#undef max
+#endif
+
 namespace spc {
 namespace widgets {
 
-	MainWindow::MainWindow(QMainWindow * par) : QMainWindow(par), _socketPlugins(), _completeMessageAmount(), _processedMessageAmount(0), _controlSocket(nullptr) {
+	MainWindow::MainWindow(QMainWindow * par) : QMainWindow(par), _socketPlugins(), _completeMessageAmount(), _processedMessageAmount(0), _triggerUpdateThreshold(1), _controlSocket(nullptr) {
 		setupUi(this);
 
 		setWindowTitle(QString("SocketPerformanceChecker (v ") + QString::number(SPC_VERSION_MAJOR) + QString(".") + QString::number(SPC_VERSION_MINOR) + QString(".") + QString::number(SPC_VERSION_PATCH) + QString(")"));
@@ -56,13 +60,12 @@ namespace widgets {
 		horizontalHeader.append("Message Count");
 		horizontalHeader.append("Payload Size in Bytes");
 		model->setHorizontalHeaderLabels(horizontalHeader);
-		model->index(0, 0, model->index(1, 1));
 		header->setModel(model);
 		resultTableView->setHorizontalHeader(header);
 		resultTableView->resizeRowsToContents();
 		resultTableView->resizeColumnsToContents();
 
-		resultTableView->setModel(new QStandardItemModel(resultTableView));
+		resultTableView->setModel(model);
 
 		loadPlugins();
 
@@ -102,8 +105,14 @@ namespace widgets {
 			// TODO: error message
 			return;
 		}
+
+		// 0.1% of _completeMessageAmount or 1
+		_triggerUpdateThreshold = std::max(uint64_t(1), _completeMessageAmount / 1000);
 		
-		dynamic_cast<QStandardItemModel *>(resultTableView->model())->clear();
+		QStandardItemModel * model = dynamic_cast<QStandardItemModel *>(resultTableView->model());
+		while (model->rowCount() > 0) {
+			model->removeRow(0);
+		}
 
 		progressBar->setValue(0);
 		progressBar->setMaximum(_completeMessageAmount);
@@ -177,8 +186,8 @@ namespace widgets {
 		newItem->setEnabled(false);
 		model->setItem(rowCount, 5, newItem);
 
-		// seventh column: complete duration
-		newItem = new QStandardItem(QString::number(runsSpinBox->value()));
+		// seventh column: message count
+		newItem = new QStandardItem(QString::number(messageCountSpinBox->value()));
 		newItem->setCheckable(false);
 		newItem->setEditable(false);
 		newItem->setSelectable(false);
@@ -192,6 +201,8 @@ namespace widgets {
 		newItem->setSelectable(false);
 		newItem->setEnabled(false);
 		model->setItem(rowCount, 7, newItem);
+
+		resultTableView->sortByColumn(2, Qt::SortOrder::AscendingOrder);
 	}
 
 	void MainWindow::updateProgressBar() {
@@ -214,7 +225,9 @@ namespace widgets {
 			QObject * plugin = loader.instance();
 			if (plugin) {
 				plugins::SocketPluginInterface * spi = qobject_cast<plugins::SocketPluginInterface *>(plugin);
-				_socketPlugins.insert(std::make_pair(spi->getName(), std::make_pair(spi, new QCheckBox(spi->getName(), this))));
+				QCheckBox * cb = new QCheckBox(spi->getName(), this);
+				cb->setChecked(true);
+				_socketPlugins.insert(std::make_pair(spi->getName(), std::make_pair(spi, cb)));
 			} else {
 				QMessageBox box;
 				box.setWindowTitle(QApplication::tr("Error loading plugin!"));
@@ -263,7 +276,7 @@ namespace widgets {
 				delete msg;
 				// connect to socket
 				if (!socketPlugin->connect(ip, port, std::bind(&MainWindow::receivedMessage, this))) {
-					_processedMessageAmount += messageCount;
+					//_processedMessageAmount += messageCount;
 					emit updateProgress();
 					continue;
 				}
@@ -287,11 +300,14 @@ namespace widgets {
 			}
 			emit updateProgress();
 		}
+		emit updateProgress();
 	}
 
 	void MainWindow::receivedMessage() {
 		_processedMessageAmount++;
-		emit updateProgress();
+		if (_processedMessageAmount % _triggerUpdateThreshold == 0) {
+			emit updateProgress();
+		}
 	}
 
 } /* namespace widgets */

@@ -95,6 +95,11 @@ namespace widgets {
 		std::atomic<uint64_t> _processedMessageAmount;
 
 		/**
+		 * \brief at this amount of processed messages a new update is triggered
+		 */
+		uint64_t _triggerUpdateThreshold;
+
+		/**
 		 * \brief socket used to handle basic control flow between SocketPerformanceChecker and SocketPerformanceHelper
 		 */
 		clockUtils::sockets::TcpSocket * _controlSocket;
