@@ -75,6 +75,7 @@ namespace widgets {
 
 		connect(this, SIGNAL(finishedSocket(QString, std::vector<uint64_t>)), this, SLOT(updateSocketResults(QString, std::vector<uint64_t>)), Qt::QueuedConnection);
 		connect(this, SIGNAL(updateProgress()), this, SLOT(updateProgressBar()), Qt::QueuedConnection);
+		connect(this, SIGNAL(finishedTest()), this, SLOT(testFinished()), Qt::QueuedConnection);
 	}
 
 	MainWindow::~MainWindow() {
@@ -113,6 +114,8 @@ namespace widgets {
 		while (model->rowCount() > 0) {
 			model->removeRow(0);
 		}
+
+		enableGUI(false);
 
 		progressBar->setValue(0);
 		progressBar->setMaximum(_completeMessageAmount);
@@ -209,6 +212,10 @@ namespace widgets {
 		progressBar->setValue(_processedMessageAmount);
 	}
 
+	void MainWindow::testFinished() {
+		enableGUI(true);
+	}
+
 	void MainWindow::closeEvent(QCloseEvent * evt) {
 		closeTool();
 		evt->ignore();
@@ -300,13 +307,29 @@ namespace widgets {
 			}
 			emit updateProgress();
 		}
+		_processedMessageAmount = _completeMessageAmount;
 		emit updateProgress();
+		emit finishedTest();
 	}
 
 	void MainWindow::receivedMessage() {
 		_processedMessageAmount++;
 		if (_processedMessageAmount % _triggerUpdateThreshold == 0) {
 			emit updateProgress();
+		}
+	}
+
+	void MainWindow::enableGUI(bool enabled) {
+		runsSpinBox->setEnabled(enabled);
+		messageCountSpinBox->setEnabled(enabled);
+		payloadSizeSpinBox->setEnabled(enabled);
+		ipLineEdit->setEnabled(enabled);
+		portSpinBox->setEnabled(enabled);
+		startButton->setEnabled(enabled);
+		if (enabled) {
+			progressBar->hide();
+		} else {
+			progressBar->show();
 		}
 	}
 

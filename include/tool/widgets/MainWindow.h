@@ -57,6 +57,11 @@ namespace widgets {
 		 */
 		void updateProgress();
 
+		/**
+		 * \brief triggers reenabling of the GUI after finishing all tests
+		 */
+		void finishedTest();
+
 	private slots:
 		/**
 		 * \brief shuts test down
@@ -77,6 +82,12 @@ namespace widgets {
 		 * \brief updates the progress bar with current amount of processed message
 		 */
 		void updateProgressBar();
+
+		/**
+		 * \brief called when the test has finished
+		 * prints a message box and reenables the GUI
+		 */
+		void testFinished();
 
 	private:
 		/**
@@ -134,6 +145,11 @@ namespace widgets {
 		 * \brief called from a non-Qt-thread when a message for the current test arrives
 		 */
 		void receivedMessage();
+
+		/**
+		 * \brief sets all interactive GUI elements to enabled/disabled
+		 */
+		void enableGUI(bool enabled);
 	};
 
 } /* namespace widgets */
