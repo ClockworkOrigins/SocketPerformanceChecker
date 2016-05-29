@@ -31,15 +31,15 @@
 
 namespace spc {
 
-	Helper::Helper() : _socketPlugins(), _controlSocket(nullptr), _activePlugin(nullptr) {
+	Helper::Helper() : _socketPlugins(), _listenSocket(nullptr), _controlSocket(nullptr), _activePlugin(nullptr) {
 		loadPlugins();
 
-		_controlSocket = new clockUtils::sockets::TcpSocket();
-		_controlSocket->listen(CONTROL_PORT, 1, true, std::bind(&Helper::acceptConnection, this, std::placeholders::_1));
+		_listenSocket = new clockUtils::sockets::TcpSocket();
+		_listenSocket->listen(CONTROL_PORT, 1, true, std::bind(&Helper::acceptConnection, this, std::placeholders::_1));
 	}
 
 	Helper::~Helper() {
-		delete _controlSocket;
+		delete _listenSocket;
 	}
 
 	void Helper::loadPlugins() {

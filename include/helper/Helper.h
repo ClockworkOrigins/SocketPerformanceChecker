@@ -50,6 +50,11 @@ namespace plugins {
 		std::map<std::string, plugins::SocketPluginInterface *> _socketPlugins;
 
 		/**
+		 * \brief socket used to accept connections from checker
+		 */
+		clockUtils::sockets::TcpSocket * _listenSocket;
+
+		/**
 		 * \brief socket used to handle basic control flow between SocketPerformanceChecker and SocketPerformanceHelper
 		 */
 		clockUtils::sockets::TcpSocket * _controlSocket;

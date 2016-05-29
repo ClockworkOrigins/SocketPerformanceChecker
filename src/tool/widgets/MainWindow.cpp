@@ -62,9 +62,13 @@ namespace widgets {
 		resultTableView->resizeRowsToContents();
 		resultTableView->resizeColumnsToContents();
 
+		resultTableView->setModel(new QStandardItemModel(resultTableView));
+
 		loadPlugins();
 
 		addSocketCheckboxes();
+
+		qRegisterMetaType<std::vector<uint64_t>>("std::vector<uint64_t>");
 
 		connect(this, SIGNAL(finishedSocket(QString, std::vector<uint64_t>)), this, SLOT(updateSocketResults(QString, std::vector<uint64_t>)), Qt::QueuedConnection);
 		connect(this, SIGNAL(updateProgress()), this, SLOT(updateProgressBar()), Qt::QueuedConnection);
@@ -94,6 +98,11 @@ namespace widgets {
 		_completeMessageAmount = socketList.size() * runs * messageCount;
 		_processedMessageAmount = 0;
 
+		if (_completeMessageAmount == 0) {
+			// TODO: error message
+			return;
+		}
+		
 		dynamic_cast<QStandardItemModel *>(resultTableView->model())->clear();
 
 		progressBar->setValue(0);

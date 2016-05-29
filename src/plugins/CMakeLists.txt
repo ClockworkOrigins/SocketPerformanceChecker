@@ -15,6 +15,4 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-ADD_SUBDIRECTORY(helper)
-ADD_SUBDIRECTORY(plugins)
-ADD_SUBDIRECTORY(tool)
+ADD_SUBDIRECTORY(clockUtilsTcpSyncPlugin)
