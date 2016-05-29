@@ -23,6 +23,9 @@
 #include "ui_wndMainWindow.h"
 
 namespace spc {
+namespace plugins {
+	class SocketPluginInterface;
+} /* namespace plugins */
 namespace widgets {
 
 	class MainWindow : public QMainWindow, public Ui::wndMainWindow {
@@ -33,11 +36,37 @@ namespace widgets {
 		~MainWindow();
 
 	private slots:
+		/**
+		 * \brief shuts test down
+		 */
 		void closeTool();
+
+		/**
+		 * \brief starts the configured test
+		 */
 		void startTest();
 
 	private:
+		/**
+		 * \brief stores all loaded SocketPlugins
+		 */
+		std::map<std::string, plugins::SocketPluginInterface *> _socketPlugins;
+
+		/**
+		 * \brief used to capture pressing 'x' to close Window or close Window using ALT + F4
+		 * calls closeTool()
+		 */
 		void closeEvent(QCloseEvent * evt) override;
+
+		/**
+		 * \brief loads all possible plugin types, actually only SocketPlugins
+		 */
+		void loadPlugins();
+
+		/**
+		 * \brief loads all SocketPlugins
+		 */
+		void loadSocketPlugins();
 	};
 
 } /* namespace widgets */

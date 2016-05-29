@@ -21,13 +21,18 @@
 
 #include "spcBuildSettings.h"
 
+#include "plugins/SocketPluginInterface.h"
+
 #include <QCloseEvent>
+#include <QDir>
+#include <QMessageBox>
+#include <QPluginLoader>
 #include <QStandardItemModel>
 
 namespace spc {
 namespace widgets {
 
-	MainWindow::MainWindow(QMainWindow * par) : QMainWindow(par) {
+	MainWindow::MainWindow(QMainWindow * par) : QMainWindow(par), _socketPlugins() {
 		setupUi(this);
 
 		setWindowTitle(QString("SocketPerformanceChecker (v ") + QString::number(SPC_VERSION_MAJOR) + QString(".") + QString::number(SPC_VERSION_MINOR) + QString(".") + QString::number(SPC_VERSION_PATCH) + QString(")"));
@@ -43,6 +48,8 @@ namespace widgets {
 		resultTableView->setHorizontalHeader(header);
 		resultTableView->resizeRowsToContents();
 		resultTableView->resizeColumnsToContents();
+
+		loadPlugins();
 	}
 
 	MainWindow::~MainWindow() {
@@ -58,6 +65,28 @@ namespace widgets {
 	void MainWindow::closeEvent(QCloseEvent * evt) {
 		closeTool();
 		evt->ignore();
+	}
+
+	void MainWindow::loadPlugins() {
+		loadSocketPlugins();
+	}
+
+	void MainWindow::loadSocketPlugins() {
+		QDir pluginsDir = QDir(qApp->applicationDirPath() + "/plugins/sockets");
+		foreach(QString fileName, pluginsDir.entryList(QDir::Files)) {
+			QPluginLoader loader(pluginsDir.absoluteFilePath(fileName));
+			QObject * plugin = loader.instance();
+			if (plugin) {
+				plugins::SocketPluginInterface * spi = qobject_cast<plugins::SocketPluginInterface *>(plugin);
+				_socketPlugins.insert(std::make_pair(spi->getName(), spi));
+			} else {
+				QMessageBox box;
+				box.setWindowTitle(QApplication::tr("Error loading plugin!"));
+				box.setInformativeText(loader.errorString());
+				box.setStandardButtons(QMessageBox::StandardButton::Ok);
+				box.exec();
+			}
+		}
 	}
 
 } /* namespace widgets */
