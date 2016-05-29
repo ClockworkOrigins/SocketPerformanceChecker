@@ -17,3 +17,4 @@
 
 ADD_SUBDIRECTORY(clockUtilsTcpASyncPlugin)
 ADD_SUBDIRECTORY(clockUtilsTcpSyncPlugin)
+ADD_SUBDIRECTORY(clockUtilsUdpSyncPlugin)
