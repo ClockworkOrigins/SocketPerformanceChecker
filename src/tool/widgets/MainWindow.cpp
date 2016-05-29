@@ -23,7 +23,11 @@
 
 #include "spcBuildSettings.h"
 
+#include "MessageStructs.h"
+
 #include "plugins/SocketPluginInterface.h"
+
+#include "clockUtils/sockets/TcpSocket.h"
 
 #include <QCheckBox>
 #include <QCloseEvent>
@@ -35,7 +39,7 @@
 namespace spc {
 namespace widgets {
 
-	MainWindow::MainWindow(QMainWindow * par) : QMainWindow(par), _socketPlugins(), _completeMessageAmount(), _processedMessageAmount(0) {
+	MainWindow::MainWindow(QMainWindow * par) : QMainWindow(par), _socketPlugins(), _completeMessageAmount(), _processedMessageAmount(0), _controlSocket(nullptr) {
 		setupUi(this);
 
 		setWindowTitle(QString("SocketPerformanceChecker (v ") + QString::number(SPC_VERSION_MAJOR) + QString(".") + QString::number(SPC_VERSION_MINOR) + QString(".") + QString::number(SPC_VERSION_PATCH) + QString(")"));
@@ -67,6 +71,7 @@ namespace widgets {
 	}
 
 	MainWindow::~MainWindow() {
+		delete _controlSocket;
 	}
 
 	void MainWindow::closeTool() {
@@ -93,6 +98,9 @@ namespace widgets {
 
 		progressBar->setValue(0);
 		progressBar->setMaximum(_completeMessageAmount);
+
+		delete _controlSocket;
+		_controlSocket = nullptr;
 
 		std::thread(std::bind(&MainWindow::performTest, this, ip, port, socketList, runs, messageCount, payloadSize)).detach();
 	}
@@ -216,11 +224,34 @@ namespace widgets {
 
 	void MainWindow::performTest(QString ip, uint16_t port, QStringList socketList, uint32_t runs, uint32_t messageCount, uint32_t payloadSize) {
 		QString message(payloadSize, QChar('a'));
+		_controlSocket = new clockUtils::sockets::TcpSocket();
+		if (clockUtils::ClockError::SUCCESS != _controlSocket->connect(ip.toStdString(), CONTROL_PORT, 1000)) {
+			// TODO: (Daniel) can't connect to helper, print some error message
+			return;
+		}
 		for (QString socketPluginName : socketList) {
 			std::vector<uint64_t> durations;
 			plugins::SocketPluginInterface * socketPlugin = _socketPlugins[socketPluginName].first;
 			for (uint32_t i = 0; i < runs; i++) {
 				// connect to helper and communicate which SocketPlugin to prepare
+				common::ListenOnPluginAndPortMessage lopapm;
+				lopapm.pluginName = socketPluginName.toStdString();
+				lopapm.port = port;
+				_controlSocket->writePacket(lopapm.Serialize());
+
+				std::string reply;
+				if (clockUtils::ClockError::SUCCESS != _controlSocket->receivePacket(reply)) {
+					// TODO: (Daniel) received error from helper, stop test and print error
+					return;
+				}
+				common::Message * msg = common::Message::Deserialize(reply);
+				if (msg->type != common::MessageType::LISTENING) {
+					// TODO: (Daniel) received wrong message type from helper, stop test and print error
+					delete msg;
+					return;
+				}
+				// received LISTENING from helper, so real test can start now
+				delete msg;
 				// connect to socket
 				if (!socketPlugin->connect(ip, port, std::bind(&MainWindow::receivedMessage, this))) {
 					_processedMessageAmount += messageCount;

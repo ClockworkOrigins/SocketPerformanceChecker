@@ -27,6 +27,12 @@
 
 class QCheckBox;
 
+namespace clockUtils {
+namespace sockets {
+	class TcpSocket;
+} /* namespace sockets */
+} /* namespace clockUtils */
+
 namespace spc {
 namespace plugins {
 	class SocketPluginInterface;
@@ -87,6 +93,11 @@ namespace widgets {
 		 * \brief the current message amount that was already processed during current test session
 		 */
 		std::atomic<uint64_t> _processedMessageAmount;
+
+		/**
+		 * \brief socket used to handle basic control flow between SocketPerformanceChecker and SocketPerformanceHelper
+		 */
+		clockUtils::sockets::TcpSocket * _controlSocket;
 
 		/**
 		 * \brief used to capture pressing 'x' to close Window or close Window using ALT + F4

@@ -20,12 +20,15 @@ set(guidir ${CMAKE_SOURCE_DIR}/gui/tool)
 set(includedir ${CMAKE_SOURCE_DIR}/include/tool)
 
 INCLUDE_DIRECTORIES(${includedir})
+INCLUDE_DIRECTORIES(${includedir}/../common)
 INCLUDE_DIRECTORIES(SYSTEM ${CMAKE_CURRENT_BINARY_DIR})
 
 set(toolSrc
 	${srcdir}/main.cpp
 
 	${srcdir}/widgets/MainWindow.cpp
+
+	${CMAKE_SOURCE_DIR}/src/common/MessageStructs.cpp
 )
 
 QT5_WRAP_UI(toolUI
@@ -41,7 +44,7 @@ SOURCE_GROUP(moc /moc_*)
 
 ADD_EXECUTABLE(SocketPerformanceChecker ${GUI_TYPE} ${toolSrc} ${toolUI} ${toolGuiHeader})
 
-target_link_libraries(SocketPerformanceChecker ${QT_LIBRARIES})
+target_link_libraries(SocketPerformanceChecker ${BOOST_LIBRARIES} ${CLOCKUTILS_LIBRARIES} ${QT_LIBRARIES})
 
 IF(UNIX)
 	target_link_libraries(SocketPerformanceChecker pthread)
