@@ -32,6 +32,7 @@ We use CMake (2.8+) for the build system and a C++11 capable compiler such as g+
  * some libraries depend on others (read comments in build-dependencies)
 
 cd dependencies
+
 ./build-dependencies.sh
 
  * Go back to the main directory, run cmake with the appropriate options (see infos below) and finally make
