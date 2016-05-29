@@ -147,6 +147,19 @@
       <item row="5" column="0">
        <layout class="QVBoxLayout" name="socketPluginLayout"/>
       </item>
+      <item row="1" column="0">
+       <widget class="QProgressBar" name="progressBar">
+        <property name="value">
+         <number>0</number>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+        </property>
+        <property name="format">
+         <string>%v of %m (%p%)</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </item>
    </layout>

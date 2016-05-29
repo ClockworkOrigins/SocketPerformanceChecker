@@ -35,7 +35,7 @@
 namespace spc {
 namespace widgets {
 
-	MainWindow::MainWindow(QMainWindow * par) : QMainWindow(par), _socketPlugins() {
+	MainWindow::MainWindow(QMainWindow * par) : QMainWindow(par), _socketPlugins(), _completeMessageAmount(), _processedMessageAmount(0) {
 		setupUi(this);
 
 		setWindowTitle(QString("SocketPerformanceChecker (v ") + QString::number(SPC_VERSION_MAJOR) + QString(".") + QString::number(SPC_VERSION_MINOR) + QString(".") + QString::number(SPC_VERSION_PATCH) + QString(")"));
@@ -61,6 +61,9 @@ namespace widgets {
 		loadPlugins();
 
 		addSocketCheckboxes();
+
+		connect(this, SIGNAL(finishedSocket(QString, std::vector<uint64_t>)), this, SLOT(updateSocketResults(QString, std::vector<uint64_t>)), Qt::QueuedConnection);
+		connect(this, SIGNAL(updateProgress()), this, SLOT(updateProgressBar()), Qt::QueuedConnection);
 	}
 
 	MainWindow::~MainWindow() {
@@ -82,6 +85,14 @@ namespace widgets {
 		uint32_t runs = uint32_t(runsSpinBox->value());
 		uint32_t messageCount = uint32_t(messageCountSpinBox->value());
 		uint32_t payloadSize = uint32_t(payloadSizeSpinBox->value());
+
+		_completeMessageAmount = socketList.size() * runs * messageCount;
+		_processedMessageAmount = 0;
+
+		dynamic_cast<QStandardItemModel *>(resultTableView->model())->clear();
+
+		progressBar->setValue(0);
+		progressBar->setMaximum(_completeMessageAmount);
 
 		std::thread(std::bind(&MainWindow::performTest, this, ip, port, socketList, runs, messageCount, payloadSize)).detach();
 	}
@@ -166,6 +177,10 @@ namespace widgets {
 		model->setItem(rowCount, 7, newItem);
 	}
 
+	void MainWindow::updateProgressBar() {
+		progressBar->setValue(_processedMessageAmount);
+	}
+
 	void MainWindow::closeEvent(QCloseEvent * evt) {
 		closeTool();
 		evt->ignore();
@@ -208,8 +223,9 @@ namespace widgets {
 				// connect to helper and communicate which SocketPlugin to prepare
 				// connect to socket
 				if (!socketPlugin->connect(ip, port, std::bind(&MainWindow::receivedMessage, this))) {
-					// TODO: (Daniel) print some error message
-					break;
+					_processedMessageAmount += messageCount;
+					emit updateProgress();
+					continue;
 				}
 				// start time measuring
 				std::chrono::time_point<std::chrono::high_resolution_clock> startTime = std::chrono::high_resolution_clock::now();
@@ -226,12 +242,16 @@ namespace widgets {
 				// store current result
 				durations.push_back(duration);
 			}
-			emit finishedSocket(socketPluginName, durations);
+			if (!durations.empty()) {
+				emit finishedSocket(socketPluginName, durations);
+			}
+			emit updateProgress();
 		}
 	}
 
 	void MainWindow::receivedMessage() {
-		// TODO: (Daniel) do some stuff
+		_processedMessageAmount++;
+		emit updateProgress();
 	}
 
 } /* namespace widgets */

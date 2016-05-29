@@ -22,6 +22,7 @@
 
 #include "ui_wndMainWindow.h"
 
+#include <atomic>
 #include <cstdint>
 
 class QCheckBox;
@@ -45,6 +46,11 @@ namespace widgets {
 		 */
 		void finishedSocket(QString, std::vector<uint64_t>);
 
+		/**
+		 * \brief trigger update progress when either a test finished or a message arrived
+		 */
+		void updateProgress();
+
 	private slots:
 		/**
 		 * \brief shuts test down
@@ -61,11 +67,26 @@ namespace widgets {
 		 */
 		void updateSocketResults(QString pluginName, std::vector<uint64_t> durations);
 
+		/**
+		 * \brief updates the progress bar with current amount of processed message
+		 */
+		void updateProgressBar();
+
 	private:
 		/**
 		 * \brief stores all loaded SocketPlugins
 		 */
 		std::map<QString, std::pair<plugins::SocketPluginInterface *, QCheckBox *>> _socketPlugins;
+
+		/**
+		 * \brief the complete amount of messages that has to be processed during this test session
+		 */
+		uint64_t _completeMessageAmount;
+
+		/**
+		 * \brief the current message amount that was already processed during current test session
+		 */
+		std::atomic<uint64_t> _processedMessageAmount;
 
 		/**
 		 * \brief used to capture pressing 'x' to close Window or close Window using ALT + F4
