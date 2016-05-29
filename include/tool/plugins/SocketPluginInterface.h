@@ -22,7 +22,6 @@
 
 #include <cstdint>
 #include <functional>
-#include <string>
 
 #include <qplugin.h>
 
@@ -40,21 +39,40 @@ namespace plugins {
 		/**
 		 * \brief returns the name of the plugin as shown in the GUI and used to identify the plugin
 		 */
-		virtual std::string getName() const = 0;
+		virtual QString getName() const = 0;
+
+		/**
+		 * \brief this methods starts a listen socket to listen to a port used by helper
+		 * this method must only return if an error occured or the socket is ready to receive messages
+		 * \param[in] port the port this socket shall listen to
+		 */
+		virtual bool listen(uint16_t port) = 0;
 		
 		/**
 		 * \brief creates connection from SocketPerformanceTester to helper tool
 		 * \param[in] ip the ip address of the PC the helper tool is running on
 		 * \param[in] port the port the helper tool is listening on
-		 * \param[in] callback this callback is called for every received message to notify SocketPerformanceTester about a new message
+		 * \param[in] callback this callback is called for every received message to notify SocketPerformanceTester about a new message to update the GUI
 		 */
-		virtual bool connect(const std::string & ip, uint16_t port, const std::function<void(void)> & callback) = 0;
+		virtual bool connect(const QString & ip, uint16_t port, const std::function<void(void)> & callback) = 0;
 		
 		/**
 		 * \brief sends a message over the socket
 		 * \param[in] message the message to be sent
 		 */
-		virtual void sendMessage(const std::string & message) = 0;
+		virtual void sendMessage(const QString & message) = 0;
+
+		/**
+		 * \brief blocks until either the amount of messages specified or the timeout limit is reached
+		 * \param[in] messageCount the amount of messages to wait for
+		 * \param[in] timeOut the duration in milliseconds to wait for or -1 to wait an infinite time
+		 */
+		virtual void waitForMessages(uint32_t messageCount, int32_t timeOut) = 0;
+
+		/**
+		 * \brief disconnects this plugin, has to be set to base state to be able to create a clean new connection
+		 */
+		virtual void disconnect() = 0;
 	};
 
 } /* namespace plugins */

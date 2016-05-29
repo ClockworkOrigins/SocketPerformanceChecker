@@ -19,10 +19,13 @@
 
 #include "widgets/MainWindow.h"
 
+#include <thread>
+
 #include "spcBuildSettings.h"
 
 #include "plugins/SocketPluginInterface.h"
 
+#include <QCheckBox>
 #include <QCloseEvent>
 #include <QDir>
 #include <QMessageBox>
@@ -41,7 +44,13 @@ namespace widgets {
 		QStandardItemModel * model = new QStandardItemModel(header);
 		QStringList horizontalHeader;
 		horizontalHeader.append("Socket implementation");
-		horizontalHeader.append("Duration in ms");
+		horizontalHeader.append("Complete Duration in ms");
+		horizontalHeader.append("Avg. Duration in ms");
+		horizontalHeader.append("Min. Duration in ms");
+		horizontalHeader.append("Max. Duration in ms");
+		horizontalHeader.append("Runs");
+		horizontalHeader.append("Message Count");
+		horizontalHeader.append("Payload Size in Bytes");
 		model->setHorizontalHeaderLabels(horizontalHeader);
 		model->index(0, 0, model->index(1, 1));
 		header->setModel(model);
@@ -50,6 +59,8 @@ namespace widgets {
 		resultTableView->resizeColumnsToContents();
 
 		loadPlugins();
+
+		addSocketCheckboxes();
 	}
 
 	MainWindow::~MainWindow() {
@@ -60,6 +71,99 @@ namespace widgets {
 	}
 
 	void MainWindow::startTest() {
+		QString ip = ipLineEdit->text();
+		uint16_t port = uint16_t(portSpinBox->value());
+		QStringList socketList;
+		for (auto sp : _socketPlugins) {
+			if (sp.second.second->isChecked()) {
+				socketList.append(sp.first);
+			}
+		}
+		uint32_t runs = uint32_t(runsSpinBox->value());
+		uint32_t messageCount = uint32_t(messageCountSpinBox->value());
+		uint32_t payloadSize = uint32_t(payloadSizeSpinBox->value());
+
+		std::thread(std::bind(&MainWindow::performTest, this, ip, port, socketList, runs, messageCount, payloadSize)).detach();
+	}
+
+	void MainWindow::updateSocketResults(QString pluginName, std::vector<uint64_t> durations) {
+		uint64_t minimumDuration = UINT64_MAX;
+		uint64_t maximumDuration = 0;
+		uint64_t durationSum = 0;
+		for (uint64_t duration : durations) {
+			if (minimumDuration > duration) {
+				minimumDuration = duration;
+			}
+			if (maximumDuration < duration) {
+				maximumDuration = duration;
+			}
+			durationSum += duration;
+		}
+		QStandardItemModel * model = dynamic_cast<QStandardItemModel *>(resultTableView->model());
+		int rowCount = model->rowCount();
+		// first column: plugin name
+		QStandardItem * newItem = new QStandardItem(pluginName);
+		newItem->setCheckable(false);
+		newItem->setEditable(false);
+		newItem->setSelectable(false);
+		newItem->setEnabled(false);
+		model->setItem(rowCount, 0, newItem);
+
+		// second column: complete duration
+		newItem = new QStandardItem(QString::number(durationSum / 1000));
+		newItem->setCheckable(false);
+		newItem->setEditable(false);
+		newItem->setSelectable(false);
+		newItem->setEnabled(false);
+		model->setItem(rowCount, 1, newItem);
+
+		// third column: average duration
+		newItem = new QStandardItem(QString::number(uint64_t(durationSum / double(durations.size()) / 1000)));
+		newItem->setCheckable(false);
+		newItem->setEditable(false);
+		newItem->setSelectable(false);
+		newItem->setEnabled(false);
+		model->setItem(rowCount, 2, newItem);
+
+		// fourth column: minimum duration
+		newItem = new QStandardItem(QString::number(minimumDuration / 1000));
+		newItem->setCheckable(false);
+		newItem->setEditable(false);
+		newItem->setSelectable(false);
+		newItem->setEnabled(false);
+		model->setItem(rowCount, 3, newItem);
+
+		// fifth column: maximum duration
+		newItem = new QStandardItem(QString::number(maximumDuration / 1000));
+		newItem->setCheckable(false);
+		newItem->setEditable(false);
+		newItem->setSelectable(false);
+		newItem->setEnabled(false);
+		model->setItem(rowCount, 4, newItem);
+
+		// sixth column: runs
+		newItem = new QStandardItem(QString::number(durations.size()));
+		newItem->setCheckable(false);
+		newItem->setEditable(false);
+		newItem->setSelectable(false);
+		newItem->setEnabled(false);
+		model->setItem(rowCount, 5, newItem);
+
+		// seventh column: complete duration
+		newItem = new QStandardItem(QString::number(runsSpinBox->value()));
+		newItem->setCheckable(false);
+		newItem->setEditable(false);
+		newItem->setSelectable(false);
+		newItem->setEnabled(false);
+		model->setItem(rowCount, 6, newItem);
+
+		// eighth column: payloadSize
+		newItem = new QStandardItem(QString::number(payloadSizeSpinBox->value()));
+		newItem->setCheckable(false);
+		newItem->setEditable(false);
+		newItem->setSelectable(false);
+		newItem->setEnabled(false);
+		model->setItem(rowCount, 7, newItem);
 	}
 
 	void MainWindow::closeEvent(QCloseEvent * evt) {
@@ -78,7 +182,7 @@ namespace widgets {
 			QObject * plugin = loader.instance();
 			if (plugin) {
 				plugins::SocketPluginInterface * spi = qobject_cast<plugins::SocketPluginInterface *>(plugin);
-				_socketPlugins.insert(std::make_pair(spi->getName(), spi));
+				_socketPlugins.insert(std::make_pair(spi->getName(), std::make_pair(spi, new QCheckBox(spi->getName(), this))));
 			} else {
 				QMessageBox box;
 				box.setWindowTitle(QApplication::tr("Error loading plugin!"));
@@ -87,6 +191,47 @@ namespace widgets {
 				box.exec();
 			}
 		}
+	}
+
+	void MainWindow::addSocketCheckboxes() {
+		for (auto sp : _socketPlugins) {
+			socketPluginLayout->addWidget(sp.second.second);
+		}
+	}
+
+	void MainWindow::performTest(QString ip, uint16_t port, QStringList socketList, uint32_t runs, uint32_t messageCount, uint32_t payloadSize) {
+		QString message(payloadSize, QChar('a'));
+		for (QString socketPluginName : socketList) {
+			std::vector<uint64_t> durations;
+			plugins::SocketPluginInterface * socketPlugin = _socketPlugins[socketPluginName].first;
+			for (uint32_t i = 0; i < runs; i++) {
+				// connect to helper and communicate which SocketPlugin to prepare
+				// connect to socket
+				if (!socketPlugin->connect(ip, port, std::bind(&MainWindow::receivedMessage, this))) {
+					// TODO: (Daniel) print some error message
+					break;
+				}
+				// start time measuring
+				std::chrono::time_point<std::chrono::high_resolution_clock> startTime = std::chrono::high_resolution_clock::now();
+				// send all messages
+				for (uint32_t j = 0; j < messageCount; j++) {
+					socketPlugin->sendMessage(message);
+				}
+				// wait until all messages are echoed or timeout is reached
+				socketPlugin->waitForMessages(messageCount, 10000);
+				// calculate duration to receive all message
+				uint64_t duration = uint64_t(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - startTime).count());
+				// disconnect plugin to be able to do a clean reconnect for next repetition or new test later on
+				socketPlugin->disconnect();
+				// store current result
+				durations.push_back(duration);
+			}
+			emit finishedSocket(socketPluginName, durations);
+		}
+	}
+
+	void MainWindow::receivedMessage() {
+		// TODO: (Daniel) do some stuff
 	}
 
 } /* namespace widgets */

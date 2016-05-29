@@ -22,6 +22,10 @@
 
 #include "ui_wndMainWindow.h"
 
+#include <cstdint>
+
+class QCheckBox;
+
 namespace spc {
 namespace plugins {
 	class SocketPluginInterface;
@@ -35,6 +39,12 @@ namespace widgets {
 		MainWindow(QMainWindow * par = nullptr);
 		~MainWindow();
 
+	signals:
+		/**
+		 * \brief called when one socket completed all tests to trigger GUI update
+		 */
+		void finishedSocket(QString, std::vector<uint64_t>);
+
 	private slots:
 		/**
 		 * \brief shuts test down
@@ -46,11 +56,16 @@ namespace widgets {
 		 */
 		void startTest();
 
+		/**
+		 * \brief called when a socket was updated in Qt thread, so now GUI can be updated
+		 */
+		void updateSocketResults(QString pluginName, std::vector<uint64_t> durations);
+
 	private:
 		/**
 		 * \brief stores all loaded SocketPlugins
 		 */
-		std::map<std::string, plugins::SocketPluginInterface *> _socketPlugins;
+		std::map<QString, std::pair<plugins::SocketPluginInterface *, QCheckBox *>> _socketPlugins;
 
 		/**
 		 * \brief used to capture pressing 'x' to close Window or close Window using ALT + F4
@@ -67,6 +82,21 @@ namespace widgets {
 		 * \brief loads all SocketPlugins
 		 */
 		void loadSocketPlugins();
+
+		/**
+		 * \brief adds checkboxes for SocketPlugins to MainWindow
+		 */
+		void addSocketCheckboxes();
+
+		/**
+		 * \brief runs the actual test
+		 */
+		void performTest(QString ip, uint16_t port, QStringList socketList, uint32_t runs, uint32_t messageCount, uint32_t payloadSize);
+
+		/**
+		 * \brief called from a non-Qt-thread when a message for the current test arrives
+		 */
+		void receivedMessage();
 	};
 
 } /* namespace widgets */

@@ -38,16 +38,23 @@
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
      <layout class="QGridLayout" name="gridLayout">
+      <item row="6" column="0">
+       <widget class="QPushButton" name="startButton">
+        <property name="text">
+         <string>Start</string>
+        </property>
+       </widget>
+      </item>
       <item row="4" column="0">
        <layout class="QGridLayout" name="gridLayout_2">
-        <item row="3" column="1">
+        <item row="4" column="2">
          <widget class="QSpinBox" name="portSpinBox">
           <property name="maximum">
            <number>65535</number>
           </property>
          </widget>
         </item>
-        <item row="3" column="0">
+        <item row="4" column="0">
          <widget class="QLabel" name="label_4">
           <property name="font">
            <font>
@@ -60,10 +67,10 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="1">
+        <item row="3" column="2">
          <widget class="QLineEdit" name="ipLineEdit"/>
         </item>
-        <item row="2" column="0">
+        <item row="3" column="0">
          <widget class="QLabel" name="label_3">
           <property name="font">
            <font>
@@ -76,7 +83,7 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="0">
+        <item row="1" column="0">
          <widget class="QLabel" name="label">
           <property name="font">
            <font>
@@ -89,14 +96,14 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="1">
+        <item row="1" column="2">
          <widget class="QSpinBox" name="messageCountSpinBox">
           <property name="maximum">
            <number>1000000</number>
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
+        <item row="2" column="0">
          <widget class="QLabel" name="label_2">
           <property name="font">
            <font>
@@ -109,24 +116,36 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
+        <item row="2" column="2">
          <widget class="QSpinBox" name="payloadSizeSpinBox">
           <property name="maximum">
            <number>1000000</number>
           </property>
          </widget>
         </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_5">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Runs</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QSpinBox" name="runsSpinBox"/>
+        </item>
        </layout>
-      </item>
-      <item row="5" column="0">
-       <widget class="QPushButton" name="startButton">
-        <property name="text">
-         <string>Start</string>
-        </property>
-       </widget>
       </item>
       <item row="0" column="0">
        <widget class="QTableView" name="resultTableView"/>
+      </item>
+      <item row="5" column="0">
+       <layout class="QVBoxLayout" name="socketPluginLayout"/>
       </item>
      </layout>
     </item>
