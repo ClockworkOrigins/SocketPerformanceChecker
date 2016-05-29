@@ -48,8 +48,12 @@ namespace widgets {
 		QNumberStandardItem(QString text) : QStandardItem(text) {
 		}
 
-		bool operator<(const QNumberStandardItem & other) {
+		bool operator<(const QStandardItem & other) const override {
 			return text().toInt() < other.text().toInt();
+		}
+
+		int type() const override {
+			return UserType;
 		}
 	};
 

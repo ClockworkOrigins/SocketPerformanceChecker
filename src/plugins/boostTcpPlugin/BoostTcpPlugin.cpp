@@ -19,7 +19,6 @@
 
 #include "BoostTcpPlugin.h"
 
-#include <iostream>
 #include <thread>
 
 namespace spc {
@@ -100,7 +99,6 @@ namespace plugins {
 			try {
 				_testSocket->shutdown(boost::asio::ip::tcp::socket::shutdown_both);
 			} catch (boost::system::system_error & e) {
-				std::cout << e.what() << std::endl;
 			}
 			_testSocket->close();
 		}

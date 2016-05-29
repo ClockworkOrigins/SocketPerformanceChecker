@@ -16,6 +16,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 ADD_SUBDIRECTORY(boostTcpPlugin)
+ADD_SUBDIRECTORY(boostUdpPlugin)
 ADD_SUBDIRECTORY(clockUtilsTcpASyncPlugin)
 ADD_SUBDIRECTORY(clockUtilsTcpSyncPlugin)
 ADD_SUBDIRECTORY(clockUtilsUdpASyncPlugin)
