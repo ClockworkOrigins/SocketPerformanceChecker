@@ -62,7 +62,7 @@ tar xfj "${ARCHIVE}" >/dev/null
 status "Bootstrapping Boost"
 cd "${BUILD_DIR}"
 
-./bootstrap.sh --prefix="${PREFIX}" --with-libraries=serialization
+./bootstrap.sh --prefix="${PREFIX}" --with-libraries=serialization,system
 
 status "Building & Installing Boost"
 ./bjam -d2 \

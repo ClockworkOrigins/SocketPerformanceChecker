@@ -43,6 +43,16 @@
 namespace spc {
 namespace widgets {
 
+	class QNumberStandardItem : public QStandardItem {
+	public:
+		QNumberStandardItem(QString text) : QStandardItem(text) {
+		}
+
+		bool operator<(const QNumberStandardItem & other) {
+			return text().toInt() < other.text().toInt();
+		}
+	};
+
 	MainWindow::MainWindow(QMainWindow * par) : QMainWindow(par), _socketPlugins(), _completeMessageAmount(), _processedMessageAmount(0), _triggerUpdateThreshold(1), _controlSocket(nullptr) {
 		setupUi(this);
 
@@ -158,7 +168,7 @@ namespace widgets {
 		model->setItem(rowCount, 1, newItem);
 
 		// third column: average duration
-		newItem = new QStandardItem(QString::number(uint64_t(durationSum / double(durations.size()) / 1000)));
+		newItem = new QNumberStandardItem(QString::number(uint64_t(durationSum / double(durations.size()) / 1000)));
 		newItem->setCheckable(false);
 		newItem->setEditable(false);
 		newItem->setSelectable(false);

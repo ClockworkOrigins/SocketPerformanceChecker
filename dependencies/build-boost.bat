@@ -45,7 +45,7 @@ call bootstrap.bat
 
 if not exist b2.exe exit /b
 
-b2 toolset=%BOOSTCOMPILER% address-model=%BOOSTARCH% --with-serialization link=shared threading=multi --layout=system variant=release install --prefix=%PREFIX% stage > NUL
+b2 toolset=%BOOSTCOMPILER% address-model=%BOOSTARCH% --with-serialization --with-system link=shared threading=multi --layout=system variant=release install --prefix=%PREFIX% stage > NUL
 
 echo "Cleaning up"
 cd %DEP_DIR%
