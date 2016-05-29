@@ -15,5 +15,30 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-ADD_SUBDIRECTORY(helper)
-ADD_SUBDIRECTORY(tool)
+set(srcdir .)
+set(includedir ${CMAKE_SOURCE_DIR}/include/helper)
+
+INCLUDE_DIRECTORIES(${includedir})
+INCLUDE_DIRECTORIES(${includedir}/../common)
+INCLUDE_DIRECTORIES(${includedir}/../tool/plugins)
+INCLUDE_DIRECTORIES(SYSTEM ${CMAKE_CURRENT_BINARY_DIR})
+
+set(helperSrc
+	${srcdir}/main.cpp
+
+	${srcdir}/Helper.cpp
+
+	${CMAKE_SOURCE_DIR}/src/common/MessageStructs.cpp
+)
+
+ADD_EXECUTABLE(SocketPerformanceHelper ${helperSrc})
+
+target_link_libraries(SocketPerformanceHelper ${BOOST_LIBRARIES} ${CLOCKUTILS_LIBRARIES} ${QT_LIBRARIES})
+
+IF(UNIX)
+	target_link_libraries(SocketPerformanceHelper pthread)
+ENDIF(UNIX)
+
+IF(WIN32)
+	add_custom_command(TARGET SocketPerformanceHelper POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_BINARY_DIR}/bin/$<CONFIGURATION>/SocketPerformanceHelper.exe ${CMAKE_BINARY_DIR}/bin)
+ENDIF(WIN32)

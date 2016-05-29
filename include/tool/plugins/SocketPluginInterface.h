@@ -45,8 +45,9 @@ namespace plugins {
 		 * \brief this methods starts a listen socket to listen to a port used by helper
 		 * this method must only return if an error occured or the socket is ready to receive messages
 		 * \param[in] port the port this socket shall listen to
+		 * \param[in] callback callback to be called whenever a message is received from tester
 		 */
-		virtual bool listen(uint16_t port) = 0;
+		virtual bool listen(uint16_t port, const std::function<void(QString)> & callback) = 0;
 		
 		/**
 		 * \brief creates connection from SocketPerformanceTester to helper tool
