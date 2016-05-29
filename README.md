@@ -37,7 +37,9 @@ cd dependencies
  * Go back to the main directory, run cmake with the appropriate options (see infos below) and finally make
 
 cd ..
+
 cmake .
+
 make
 
  * now, you'll find the executables in the bin subdirectory and can run it
@@ -51,20 +53,24 @@ make
  * some libraries depends on others (read comments in build-dependencies)
  * build-dependencies.bat and the other build scripts require three tools:
 	
- - WinRAR.exe (specify path in build-common.bat)
- - cmake (has to be in path)
- - Visual Studio
+ WinRAR.exe (specify path in build-common.bat)
+ 
+ cmake (has to be in path)
+ 
+ Visual Studio
 		
  * If all these programs are installed, you start the Visual Studio command line
  * (e.g. Start => All programs => Visual Studio => Visual Studio tools => VS2013 x86 Native Tools)
  * and move to SocketPerformanceChecker directory. Then just follow the next steps:
 
 cd dependencies
+
 build-dependencies.bat
 
  * Go back to the main directory, run cmake with the appropriate options (see infos below) and you get your Visual Studio project
 
 cd ..
+
 cmake .
 
  * now you find a SocketPerformanceChecker.sln file you can open in Visual Studio. You can compile it using F7. After this, all library files
