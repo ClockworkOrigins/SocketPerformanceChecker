@@ -24,6 +24,6 @@
 int main(int argc, char ** argv) {
 	QApplication app(argc, argv);
 	spc::widgets::MainWindow wnd;
-	wnd.show();
+	wnd.showMaximized();
 	return app.exec();
 }

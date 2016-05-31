@@ -62,6 +62,8 @@ namespace widgets {
 
 		setWindowTitle(QString("SocketPerformanceChecker (v ") + QString::number(SPC_VERSION_MAJOR) + QString(".") + QString::number(SPC_VERSION_MINOR) + QString(".") + QString::number(SPC_VERSION_PATCH) + QString(")"));
 
+		progressBar->hide();
+
 		QHeaderView * header = new QHeaderView(Qt::Orientation::Horizontal, resultTableView);
 		QStandardItemModel * model = new QStandardItemModel(header);
 		QStringList horizontalHeader;
@@ -233,6 +235,13 @@ namespace widgets {
 	void MainWindow::closeEvent(QCloseEvent * evt) {
 		closeTool();
 		evt->ignore();
+	}
+
+	void MainWindow::resizeEvent(QResizeEvent * evt) {
+		QMainWindow::resizeEvent(evt);
+		for (int i = 0; i < resultTableView->model()->columnCount(); i++) {
+			resultTableView->setColumnWidth(i, width() / resultTableView->model()->columnCount());
+		}
 	}
 
 	void MainWindow::loadPlugins() {

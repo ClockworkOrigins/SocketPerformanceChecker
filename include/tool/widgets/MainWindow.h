@@ -122,6 +122,11 @@ namespace widgets {
 		void closeEvent(QCloseEvent * evt) override;
 
 		/**
+		 * \brief used to get resize event to resize columns of resultTableView to new size
+		 */
+		void resizeEvent(QResizeEvent * evt) override;
+
+		/**
 		 * \brief loads all possible plugin types, actually only SocketPlugins
 		 */
 		void loadPlugins();
