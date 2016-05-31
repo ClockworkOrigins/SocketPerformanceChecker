@@ -24,7 +24,7 @@
 namespace spc {
 namespace plugins {
 
-	BoostTcpSocketPlugin::BoostTcpSocketPlugin() : _ioService(nullptr), _testSocket(nullptr), _helperReceiveCallback(), _checkerReceiveCallback(), _messageCounter(0), _conditionLock(), _conditionVariable() {
+	BoostTcpSocketPlugin::BoostTcpSocketPlugin() : _ioService(nullptr), _testSocket(nullptr), _helperReceiveCallback(), _checkerReceiveCallback(), _messageCounter(0), _conditionLock(), _conditionVariable(), _listenThread(nullptr), _receiveThread(nullptr) {
 	}
 
 	bool BoostTcpSocketPlugin::listen(uint16_t port, const std::function<void(QString)> & callback) {
@@ -33,12 +33,12 @@ namespace plugins {
 		_ioService->run();
 		_resolver = new boost::asio::ip::tcp::resolver(*_ioService);
 		_testSocket = new boost::asio::ip::tcp::socket(*_ioService);
-		std::thread([this, port]() {
+		_listenThread = new std::thread([this, port]() {
 			boost::asio::ip::tcp::acceptor acceptor(*_ioService, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port));
 			acceptor.accept(*_testSocket);
 			acceptor.close();
-			std::thread(std::bind(&BoostTcpSocketPlugin::readFromSocket, this)).detach();
-		}).detach();
+			_receiveThread = new std::thread(std::bind(&BoostTcpSocketPlugin::readFromSocket, this));
+		});
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 		return true;
 	}
@@ -54,7 +54,7 @@ namespace plugins {
 		boost::asio::ip::tcp::resolver::iterator end;
 		boost::system::error_code error = boost::asio::error::host_not_found;
 		_testSocket->connect(*it++, error);
-		std::thread(std::bind(&BoostTcpSocketPlugin::readFromSocket, this)).detach();
+		_receiveThread = new std::thread(std::bind(&BoostTcpSocketPlugin::readFromSocket, this));
 		return error == 0;
 	}
 
@@ -98,15 +98,27 @@ namespace plugins {
 			_testSocket->cancel();
 			try {
 				_testSocket->shutdown(boost::asio::ip::tcp::socket::shutdown_both);
-			} catch (boost::system::system_error & e) {
+			} catch (boost::system::system_error &) {
 			}
 			_testSocket->close();
+		}
+		if (_listenThread) {
+			_listenThread->join();
+			delete _listenThread;
+			_listenThread = nullptr;
+		}
+		if (_receiveThread) {
+			_receiveThread->join();
+			delete _receiveThread;
+			_receiveThread = nullptr;
 		}
 		delete _testSocket;
 		_testSocket = nullptr;
 		_messageCounter = 0;
 		_helperReceiveCallback = std::function<void(QString)>();
 		_checkerReceiveCallback = std::function<void(void)>();
+		delete _resolver;
+		_resolver = nullptr;
 		delete _ioService;
 		_ioService = nullptr;
 	}

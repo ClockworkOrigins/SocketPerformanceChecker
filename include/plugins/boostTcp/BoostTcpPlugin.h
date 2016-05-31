@@ -29,6 +29,10 @@
 
 #include <QObject>
 
+namespace std {
+	class thread;
+} /* namespace std */
+
 namespace spc {
 namespace plugins {
 
@@ -80,6 +84,16 @@ namespace plugins {
 		 * \brief condition variable to wait for all messages to arrive
 		 */
 		std::condition_variable _conditionVariable;
+
+		/**
+		 * \brief worker thread used to listen for connection
+		 */
+		std::thread * _listenThread;
+
+		/**
+		 * \brief worker thread used to receive from connections
+		 */
+		std::thread * _receiveThread;
 
 		/**
 		 * \brief returns the name of the plugin as shown in the GUI and used to identify the plugin

@@ -21,12 +21,10 @@
 
 #include <thread>
 
-#include "boost/bind.hpp"
-
 namespace spc {
 namespace plugins {
 
-	BoostUdpSocketPlugin::BoostUdpSocketPlugin() : _buffer(), _ioService(nullptr), _testSocket(nullptr), _helperReceiveCallback(), _checkerReceiveCallback(), _messageCounter(0), _conditionLock(), _conditionVariable(), _targetIP(), _targetPort() {
+	BoostUdpSocketPlugin::BoostUdpSocketPlugin() : _buffer(), _ioService(nullptr), _testSocket(nullptr), _helperReceiveCallback(), _checkerReceiveCallback(), _messageCounter(0), _conditionLock(), _conditionVariable(), _targetIP(), _targetPort(), _receiveThread(nullptr) {
 	}
 
 	bool BoostUdpSocketPlugin::listen(uint16_t port, const std::function<void(QString)> & callback) {
@@ -34,14 +32,15 @@ namespace plugins {
 		_ioService = new boost::asio::io_service();
 		_ioService->run();
 		_testSocket = new boost::asio::ip::udp::socket(*_ioService, boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(), port + 1));
-		std::thread([this]() {
+		_receiveThread = new std::thread([this]() {
 			boost::system::error_code error;
 			while (!error) {
 				boost::asio::ip::udp::endpoint * remoteEndPoint = new boost::asio::ip::udp::endpoint();
 				size_t len = _testSocket->receive_from(boost::asio::buffer(_buffer, 1048576), *remoteEndPoint, 0, error);
 				handleReceive(error, len, remoteEndPoint);
+				delete remoteEndPoint;
 			}
-		}).detach();
+		});
 		return true;
 	}
 
@@ -51,16 +50,16 @@ namespace plugins {
 		_targetPort = port + 1;
 		_ioService = new boost::asio::io_service();
 		_ioService->run();
-		_resolver = new boost::asio::ip::udp::resolver(*_ioService);
 		_testSocket = new boost::asio::ip::udp::socket(*_ioService, boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(), port));
-		std::thread([this]() {
+		_receiveThread = new std::thread([this]() {
 			boost::system::error_code error;
 			while (!error) {
 				boost::asio::ip::udp::endpoint * remoteEndPoint = new boost::asio::ip::udp::endpoint();
 				size_t len = _testSocket->receive_from(boost::asio::buffer(_buffer, 1048576), *remoteEndPoint, 0, error);
 				handleReceive(error, len, remoteEndPoint);
+				delete remoteEndPoint;
 			}
-		}).detach();
+		});
 		return true;
 	}
 
@@ -87,6 +86,11 @@ namespace plugins {
 		if (_testSocket) {
 			_testSocket->close();
 		}
+		if (_receiveThread) {
+			_receiveThread->join();
+			delete _receiveThread;
+			_receiveThread = nullptr;
+		}
 		delete _testSocket;
 		_testSocket = nullptr;
 		_messageCounter = 0;
@@ -94,6 +98,7 @@ namespace plugins {
 		_checkerReceiveCallback = std::function<void(void)>();
 		delete _ioService;
 		_ioService = nullptr;
+		_targetPort = 0;
 	}
 
 	void BoostUdpSocketPlugin::handleReceive(const boost::system::error_code & e, size_t len, boost::asio::ip::udp::endpoint * remoteEndpoint) {

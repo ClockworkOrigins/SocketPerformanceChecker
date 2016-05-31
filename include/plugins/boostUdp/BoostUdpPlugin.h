@@ -30,6 +30,10 @@
 
 #include <QObject>
 
+namespace std {
+	class thread;
+} /* namespace std */
+
 namespace spc {
 namespace plugins {
 
@@ -48,11 +52,6 @@ namespace plugins {
 		 * \brief boost requires an io_service
 		 */
 		boost::asio::io_service * _ioService;
-
-		/**
-		 * \brief boost also needs a resolver
-		 */
-		boost::asio::ip::udp::resolver * _resolver;
 
 		/**
 		 * \brief the socket used for the test communication
@@ -93,6 +92,11 @@ namespace plugins {
 		 * \brief stores target port
 		 */
 		uint16_t _targetPort;
+
+		/**
+		 * \brief worker thread to receive messages
+		 */
+		std::thread * _receiveThread;
 
 		/**
 		 * \brief returns the name of the plugin as shown in the GUI and used to identify the plugin
