@@ -92,6 +92,7 @@ namespace widgets {
 		connect(this, SIGNAL(finishedSocket(QString, std::vector<uint64_t>)), this, SLOT(updateSocketResults(QString, std::vector<uint64_t>)), Qt::QueuedConnection);
 		connect(this, SIGNAL(updateProgress()), this, SLOT(updateProgressBar()), Qt::QueuedConnection);
 		connect(this, SIGNAL(finishedTest()), this, SLOT(testFinished()), Qt::QueuedConnection);
+		connect(this, SIGNAL(addErrorMessageBox(QString, QString)), this, SLOT(showErrorMessageBox(QString, QString)), Qt::QueuedConnection);
 	}
 
 	MainWindow::~MainWindow() {
@@ -232,6 +233,14 @@ namespace widgets {
 		enableGUI(true);
 	}
 
+	void MainWindow::showErrorMessageBox(QString title, QString message) const {
+		QMessageBox box;
+		box.setWindowTitle(title);
+		box.setInformativeText(message);
+		box.setStandardButtons(QMessageBox::StandardButton::Ok);
+		box.exec();
+	}
+
 	void MainWindow::closeEvent(QCloseEvent * evt) {
 		closeTool();
 		evt->ignore();
@@ -274,7 +283,7 @@ namespace widgets {
 		QString message(payloadSize, QChar('a'));
 		_controlSocket = new clockUtils::sockets::TcpSocket();
 		if (clockUtils::ClockError::SUCCESS != _controlSocket->connect(ip.toStdString(), CONTROL_PORT, 1000)) {
-			addErrorMessageBox("Connection failed.", "Can't connect to SocketPerformanceHelper. Maybe you haven't started it yet or the entered ip address or port are wrong.");
+			emit addErrorMessageBox("Connection failed.", "Can't connect to SocketPerformanceHelper. Maybe you haven't started it yet or the entered ip address or port are wrong.");
 			return;
 		}
 		for (QString socketPluginName : socketList) {
@@ -289,12 +298,12 @@ namespace widgets {
 
 				std::string reply;
 				if (clockUtils::ClockError::SUCCESS != _controlSocket->receivePacket(reply)) {
-					addErrorMessageBox("SocketPerformanceHelper not responding.", "SocketPerformanceHelper doesn't respond. Seems like an error occured.");
+					emit addErrorMessageBox("SocketPerformanceHelper not responding.", "SocketPerformanceHelper doesn't respond. Seems like an error occured.");
 					return;
 				}
 				common::Message * msg = common::Message::Deserialize(reply);
 				if (msg->type != common::MessageType::LISTENING) {
-					addErrorMessageBox("SocketPerformanceHelper sent wrong message.", "SocketPerformanceHelper has sent a wrong message. Maybe the version is wrong and not compatible.");
+					emit addErrorMessageBox("SocketPerformanceHelper sent wrong message.", "SocketPerformanceHelper has sent a wrong message. Maybe the version is wrong and not compatible.");
 					delete msg;
 					return;
 				}
@@ -302,7 +311,7 @@ namespace widgets {
 				delete msg;
 				// connect to socket
 				if (!socketPlugin->connect(ip, port, std::bind(&MainWindow::receivedMessage, this))) {
-					addErrorMessageBox("Plugin can't connect.", "Failed to connect plugin: "  + socketPlugin->getName());
+					emit addErrorMessageBox("Plugin can't connect.", "Failed to connect plugin: " + socketPlugin->getName());
 					emit updateProgress();
 					continue;
 				}
@@ -317,7 +326,7 @@ namespace widgets {
 				// calculate duration to receive all message
 				uint64_t duration = uint64_t(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - startTime).count());
 				if (!b) {
-					addErrorMessageBox("Plugin timed out.", "Plugin '" + socketPlugin->getName() + "' hasn't received all messages and timed out.");
+					emit addErrorMessageBox("Plugin timed out.", "Plugin '" + socketPlugin->getName() + "' hasn't received all messages and timed out.");
 				}
 				// disconnect plugin to be able to do a clean reconnect for next repetition or new test later on
 				socketPlugin->disconnect();
@@ -353,14 +362,6 @@ namespace widgets {
 		} else {
 			progressBar->show();
 		}
-	}
-
-	void MainWindow::addErrorMessageBox(QString title, QString message) const {
-		QMessageBox box;
-		box.setWindowTitle(title);
-		box.setInformativeText(message);
-		box.setStandardButtons(QMessageBox::StandardButton::Ok);
-		box.exec();
 	}
 
 } /* namespace widgets */

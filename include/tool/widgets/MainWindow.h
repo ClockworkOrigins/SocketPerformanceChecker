@@ -62,6 +62,11 @@ namespace widgets {
 		 */
 		void finishedTest();
 
+		/**
+		 * \brief adds a message box printing an error message
+		 */
+		void addErrorMessageBox(QString, QString);
+
 	private slots:
 		/**
 		 * \brief shuts test down
@@ -88,6 +93,11 @@ namespace widgets {
 		 * prints a message box and reenables the GUI
 		 */
 		void testFinished();
+
+		/**
+		 * \brief adds a message box printing an error message
+		 */
+		void showErrorMessageBox(QString title, QString message) const;
 
 	private:
 		/**
@@ -155,11 +165,6 @@ namespace widgets {
 		 * \brief sets all interactive GUI elements to enabled/disabled
 		 */
 		void enableGUI(bool enabled);
-
-		/**
-		 * \brief adds a message box printing an error message
-		 */
-		void addErrorMessageBox(QString title, QString message) const;
 	};
 
 } /* namespace widgets */
