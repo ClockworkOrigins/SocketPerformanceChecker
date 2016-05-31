@@ -115,7 +115,7 @@ namespace plugins {
 		 * \param[in] messageCount the amount of messages to wait for
 		 * \param[in] timeOut the duration in milliseconds to wait for or -1 to wait an infinite time
 		 */
-		void waitForMessages(uint32_t messageCount, int32_t timeOut);
+		bool waitForMessages(uint32_t messageCount, int32_t timeOut);
 
 		/**
 		 * \brief disconnects this plugin, has to be set to base state to be able to create a clean new connection

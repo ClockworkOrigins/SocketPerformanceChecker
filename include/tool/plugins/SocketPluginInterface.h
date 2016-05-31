@@ -46,6 +46,7 @@ namespace plugins {
 		 * this method must only return if an error occured or the socket is ready to receive messages
 		 * \param[in] port the port this socket shall listen to
 		 * \param[in] callback callback to be called whenever a message is received from tester
+		 * \return returns true if socket is listening, otherwise false
 		 */
 		virtual bool listen(uint16_t port, const std::function<void(QString)> & callback) = 0;
 		
@@ -54,6 +55,7 @@ namespace plugins {
 		 * \param[in] ip the ip address of the PC the helper tool is running on
 		 * \param[in] port the port the helper tool is listening on
 		 * \param[in] callback this callback is called for every received message to notify SocketPerformanceTester about a new message to update the GUI
+		 * \return returns true if connection was created successfully, otherwise false
 		 */
 		virtual bool connect(const QString & ip, uint16_t port, const std::function<void(void)> & callback) = 0;
 		
@@ -67,8 +69,9 @@ namespace plugins {
 		 * \brief blocks until either the amount of messages specified or the timeout limit is reached
 		 * \param[in] messageCount the amount of messages to wait for
 		 * \param[in] timeOut the duration in milliseconds to wait for or -1 to wait an infinite time
+		 * \return returns true if all messages were received, false if timeOut occured
 		 */
-		virtual void waitForMessages(uint32_t messageCount, int32_t timeOut) = 0;
+		virtual bool waitForMessages(uint32_t messageCount, int32_t timeOut) = 0;
 
 		/**
 		 * \brief disconnects this plugin, has to be set to base state to be able to create a clean new connection

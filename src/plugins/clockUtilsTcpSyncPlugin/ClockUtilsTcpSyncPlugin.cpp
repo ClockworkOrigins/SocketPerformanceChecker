@@ -61,11 +61,14 @@ namespace plugins {
 		_testSocket->writePacket(message.toStdString());
 	}
 
-	void ClockUtilsTcpSocketPlugin::waitForMessages(uint32_t messageCount, int32_t timeOut) {
+	bool ClockUtilsTcpSocketPlugin::waitForMessages(uint32_t messageCount, int32_t timeOut) {
 		std::unique_lock<std::mutex> ul(_conditionLock);
 		while (_messageCounter < messageCount) {
-			_conditionVariable.wait_for(ul, std::chrono::milliseconds(timeOut));
+			if (_conditionVariable.wait_for(ul, std::chrono::milliseconds(timeOut)) == std::cv_status::timeout) {
+				break;
+			}
 		}
+		return _messageCounter == messageCount;
 	}
 
 	void ClockUtilsTcpSocketPlugin::disconnect() {

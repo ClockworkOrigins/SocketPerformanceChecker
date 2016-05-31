@@ -67,11 +67,14 @@ namespace plugins {
 		_testSocket->writePacket(_targetIP, _targetPort, message.toStdString());
 	}
 
-	void ClockUtilsUdpSocketPlugin::waitForMessages(uint32_t messageCount, int32_t timeOut) {
+	bool ClockUtilsUdpSocketPlugin::waitForMessages(uint32_t messageCount, int32_t timeOut) {
 		std::unique_lock<std::mutex> ul(_conditionLock);
 		while (_messageCounter < messageCount) {
-			_conditionVariable.wait_for(ul, std::chrono::milliseconds(timeOut));
+			if (_conditionVariable.wait_for(ul, std::chrono::milliseconds(timeOut)) == std::cv_status::timeout) {
+				break;
+			}
 		}
+		return _messageCounter == messageCount;
 	}
 
 	void ClockUtilsUdpSocketPlugin::disconnect() {

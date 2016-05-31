@@ -83,11 +83,14 @@ namespace plugins {
 		boost::asio::write(*_testSocket, boost::asio::buffer(&(v[0]), v.size()), err);
 	}
 
-	void BoostTcpSocketPlugin::waitForMessages(uint32_t messageCount, int32_t timeOut) {
+	bool BoostTcpSocketPlugin::waitForMessages(uint32_t messageCount, int32_t timeOut) {
 		std::unique_lock<std::mutex> ul(_conditionLock);
 		while (_messageCounter < messageCount) {
-			_conditionVariable.wait_for(ul, std::chrono::milliseconds(timeOut));
+			if (_conditionVariable.wait_for(ul, std::chrono::milliseconds(timeOut)) == std::cv_status::timeout) {
+				break;
+			}
 		}
+		return _messageCounter == messageCount;
 	}
 
 	void BoostTcpSocketPlugin::disconnect() {

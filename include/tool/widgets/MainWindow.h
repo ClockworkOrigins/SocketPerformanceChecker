@@ -155,6 +155,11 @@ namespace widgets {
 		 * \brief sets all interactive GUI elements to enabled/disabled
 		 */
 		void enableGUI(bool enabled);
+
+		/**
+		 * \brief adds a message box printing an error message
+		 */
+		void addErrorMessageBox(QString title, QString message) const;
 	};
 
 } /* namespace widgets */

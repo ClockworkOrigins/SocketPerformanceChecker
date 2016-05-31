@@ -72,11 +72,14 @@ namespace plugins {
 		_testSocket->send_to(boost::asio::buffer(message.toStdString()), endpoint);
 	}
 
-	void BoostUdpSocketPlugin::waitForMessages(uint32_t messageCount, int32_t timeOut) {
+	bool BoostUdpSocketPlugin::waitForMessages(uint32_t messageCount, int32_t timeOut) {
 		std::unique_lock<std::mutex> ul(_conditionLock);
 		while (_messageCounter < messageCount) {
-			_conditionVariable.wait_for(ul, std::chrono::milliseconds(timeOut));
+			if (_conditionVariable.wait_for(ul, std::chrono::milliseconds(timeOut)) == std::cv_status::timeout) {
+				break;
+			}
 		}
+		return _messageCounter == messageCount;
 	}
 
 	void BoostUdpSocketPlugin::disconnect() {
