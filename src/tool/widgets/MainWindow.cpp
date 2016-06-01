@@ -120,7 +120,7 @@ namespace widgets {
 		_processedMessageAmount = 0;
 
 		if (_completeMessageAmount == 0) {
-			addErrorMessageBox("Can't start test.", "No socket implementations chosen to be tested. Starting test is stopped.");
+			emit addErrorMessageBox("Can't start test.", "No socket implementations chosen to be tested. Starting test is stopped.");
 			return;
 		}
 
@@ -268,7 +268,7 @@ namespace widgets {
 				cb->setChecked(true);
 				_socketPlugins.insert(std::make_pair(spi->getName(), std::make_pair(spi, cb)));
 			} else {
-				addErrorMessageBox("Error loading plugin.", loader.errorString());
+				emit addErrorMessageBox("Error loading plugin.", loader.errorString());
 			}
 		}
 	}
@@ -286,9 +286,11 @@ namespace widgets {
 			emit addErrorMessageBox("Connection failed.", "Can't connect to SocketPerformanceHelper. Maybe you haven't started it yet or the entered ip address or port are wrong.");
 			return;
 		}
+		uint32_t pluginCounter = 0;
 		for (QString socketPluginName : socketList) {
 			std::vector<uint64_t> durations;
 			plugins::SocketPluginInterface * socketPlugin = _socketPlugins[socketPluginName].first;
+			uint8_t retries = 1;
 			for (uint32_t i = 0; i < runs; i++) {
 				// connect to helper and communicate which SocketPlugin to prepare
 				common::ListenOnPluginAndPortMessage lopapm;
@@ -299,21 +301,27 @@ namespace widgets {
 				std::string reply;
 				if (clockUtils::ClockError::SUCCESS != _controlSocket->receivePacket(reply)) {
 					emit addErrorMessageBox("SocketPerformanceHelper not responding.", "SocketPerformanceHelper doesn't respond. Seems like an error occured.");
+					emit finishedTest();
 					return;
 				}
 				common::Message * msg = common::Message::Deserialize(reply);
 				if (msg->type != common::MessageType::LISTENING) {
 					emit addErrorMessageBox("SocketPerformanceHelper sent wrong message.", "SocketPerformanceHelper has sent a wrong message. Maybe the version is wrong and not compatible.");
 					delete msg;
+					emit finishedTest();
 					return;
 				}
 				// received LISTENING from helper, so real test can start now
 				delete msg;
 				// connect to socket
 				if (!socketPlugin->connect(ip, port, std::bind(&MainWindow::receivedMessage, this))) {
-					emit addErrorMessageBox("Plugin can't connect.", "Failed to connect plugin: " + socketPlugin->getName());
+					emit addErrorMessageBox("Plugin can't connect.", "Failed to connect plugin: " + socketPlugin->getName() + "\n" + QString::number(3 - retries) + " retries left.");
 					emit updateProgress();
-					continue;
+					if (retries++ < 3) {
+						continue;
+					} else {
+						break;
+					}
 				}
 				// start time measuring
 				std::chrono::time_point<std::chrono::high_resolution_clock> startTime = std::chrono::high_resolution_clock::now();
@@ -326,7 +334,10 @@ namespace widgets {
 				// calculate duration to receive all message
 				uint64_t duration = uint64_t(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - startTime).count());
 				if (!b) {
-					emit addErrorMessageBox("Plugin timed out.", "Plugin '" + socketPlugin->getName() + "' hasn't received all messages and timed out.");
+					emit addErrorMessageBox("Plugin timed out.", "Plugin '" + socketPlugin->getName() + "' hasn't received all messages and timed out.\n" + QString::number(3 - retries) + " retries left.");
+					if (retries++ == 3) {
+						break;
+					}
 				}
 				// disconnect plugin to be able to do a clean reconnect for next repetition or new test later on
 				socketPlugin->disconnect();
@@ -336,6 +347,8 @@ namespace widgets {
 			if (!durations.empty()) {
 				emit finishedSocket(socketPluginName, durations);
 			}
+			pluginCounter++;
+			_processedMessageAmount = pluginCounter * messageCount * runs;
 			emit updateProgress();
 		}
 		_processedMessageAmount = _completeMessageAmount;
