@@ -286,6 +286,7 @@ namespace widgets {
 		_controlSocket = new clockUtils::sockets::TcpSocket();
 		if (clockUtils::ClockError::SUCCESS != _controlSocket->connect(ip.toStdString(), CONTROL_PORT, 1000)) {
 			emit addErrorMessageBox("Connection failed.", "Can't connect to SocketPerformanceHelper. Maybe you haven't started it yet or the entered ip address or port are wrong.");
+			emit finishedTest();
 			return;
 		}
 		uint32_t pluginCounter = 0;
