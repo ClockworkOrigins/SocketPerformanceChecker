@@ -319,6 +319,7 @@ namespace widgets {
 				if (!socketPlugin->connect(ip, port, std::bind(&MainWindow::receivedMessage, this))) {
 					emit addErrorMessageBox("Plugin can't connect.", "Failed to connect plugin: " + socketPlugin->getName() + "\n" + QString::number(3 - retries) + " retries left.");
 					emit updateProgress();
+					std::this_thread::sleep_for(std::chrono::milliseconds(500));
 					if (retries++ < 3) {
 						continue;
 					} else {
@@ -344,7 +345,9 @@ namespace widgets {
 				// disconnect plugin to be able to do a clean reconnect for next repetition or new test later on
 				socketPlugin->disconnect();
 				// store current result
-				durations.push_back(duration);
+				if (b) { // otherwise not all messages were received
+					durations.push_back(duration);
+				}
 			}
 			if (!durations.empty()) {
 				emit finishedSocket(socketPluginName, durations);
