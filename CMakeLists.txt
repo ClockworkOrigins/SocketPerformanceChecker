@@ -27,8 +27,6 @@ cmake_minimum_required (VERSION 2.8.12)
 #
 #########################################################################
 
-option(WITH_BOOST_ASIO "build SocketPerformanceChecker with tests" ON)
-
 project(SocketPerformanceChecker)
 
 IF(NOT CMAKE_BUILD_TYPE)
