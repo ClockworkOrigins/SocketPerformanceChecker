@@ -88,8 +88,9 @@ namespace spc {
 			_activePlugin->disconnect();
 		}
 		_activePlugin = _socketPlugins[lopapm->pluginName];
+		uint16_t port = lopapm->port;
 		delete msg;
-		if (_activePlugin->listen(lopapm->port, std::bind(&Helper::receivedTestMessage, this, std::placeholders::_1))) {
+		if (_activePlugin->listen(port, std::bind(&Helper::receivedTestMessage, this, std::placeholders::_1))) {
 			// no error during listen startup, so inform SocketPerformanceChecker about running helper
 			common::ListeningMessage lm;
 			_controlSocket->writePacket(lm.Serialize());
