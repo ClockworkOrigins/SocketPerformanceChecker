@@ -28,6 +28,8 @@
 namespace spc {
 namespace plugins {
 
+	#define UDP_BUFFER_SIZE 1024 * 1024 * 10 // 10MB
+
 	/**
 	 * \brief interface for plugins used to provide own socket implementations
 	 */

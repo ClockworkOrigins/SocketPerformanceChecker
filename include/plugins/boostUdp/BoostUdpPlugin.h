@@ -46,7 +46,7 @@ namespace plugins {
 		BoostUdpSocketPlugin();
 
 	private:
-		boost::array<uint8_t, 1048576> _buffer;
+		boost::array<uint8_t, UDP_BUFFER_SIZE> _buffer;
 
 		/**
 		 * \brief boost requires an io_service

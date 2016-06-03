@@ -36,7 +36,7 @@ namespace plugins {
 			boost::system::error_code error;
 			while (!error) {
 				boost::asio::ip::udp::endpoint * remoteEndPoint = new boost::asio::ip::udp::endpoint();
-				size_t len = _testSocket->receive_from(boost::asio::buffer(_buffer, 1048576), *remoteEndPoint, 0, error);
+				size_t len = _testSocket->receive_from(boost::asio::buffer(_buffer, UDP_BUFFER_SIZE), *remoteEndPoint, 0, error);
 				handleReceive(error, len, remoteEndPoint);
 				delete remoteEndPoint;
 			}
@@ -55,7 +55,7 @@ namespace plugins {
 			boost::system::error_code error;
 			while (!error) {
 				boost::asio::ip::udp::endpoint * remoteEndPoint = new boost::asio::ip::udp::endpoint();
-				size_t len = _testSocket->receive_from(boost::asio::buffer(_buffer, 1048576), *remoteEndPoint, 0, error);
+				size_t len = _testSocket->receive_from(boost::asio::buffer(_buffer, UDP_BUFFER_SIZE), *remoteEndPoint, 0, error);
 				handleReceive(error, len, remoteEndPoint);
 				delete remoteEndPoint;
 			}
