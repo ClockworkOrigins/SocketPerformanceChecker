@@ -39,10 +39,22 @@ QT5_WRAP_CPP(toolGuiHeader
 	${includedir}/widgets/MainWindow.h
 )
 
+SET(ResourceFile resources/resources.qrc)
+
 SOURCE_GROUP(widgets /widgets/*)
 SOURCE_GROUP(moc /moc_*)
+SOURCE_GROUP(resources /resources/*)
 
-ADD_EXECUTABLE(SocketPerformanceChecker ${GUI_TYPE} ${toolSrc} ${toolUI} ${toolGuiHeader})
+# add resources ...
+QT5_ADD_RESOURCES(QT_RESOURCE_FILES ${ResourceFile})
+
+IF(WIN32)
+   set(WINDOWS_RC_FILES
+         ${CMAKE_SOURCE_DIR}/resources/common/icon.rc
+         )
+ENDIF(WIN32)
+
+ADD_EXECUTABLE(SocketPerformanceChecker ${GUI_TYPE} ${toolSrc} ${toolUI} ${toolGuiHeader} ${QT_RESOURCE_FILES} ${WINDOWS_RC_FILES})
 
 target_link_libraries(SocketPerformanceChecker ${BOOST_LIBRARIES} ${CLOCKUTILS_LIBRARIES} ${QT_LIBRARIES})
 

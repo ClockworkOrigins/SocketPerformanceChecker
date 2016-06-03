@@ -31,7 +31,13 @@ set(helperSrc
 	${CMAKE_SOURCE_DIR}/src/common/MessageStructs.cpp
 )
 
-ADD_EXECUTABLE(SocketPerformanceHelper ${helperSrc})
+IF(WIN32)
+   set(WINDOWS_RC_FILES
+         ${CMAKE_SOURCE_DIR}/resources/common/icon.rc
+         )
+ENDIF(WIN32)
+
+ADD_EXECUTABLE(SocketPerformanceHelper ${helperSrc} ${WINDOWS_RC_FILES})
 
 target_link_libraries(SocketPerformanceHelper ${BOOST_LIBRARIES} ${CLOCKUTILS_LIBRARIES} ${QT_LIBRARIES})
 
