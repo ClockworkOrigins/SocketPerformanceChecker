@@ -32,11 +32,11 @@ namespace plugins {
 		_testSocket = new clockUtils::sockets::UdpSocket();
 		bool ret = _testSocket->bind(port + 1) == clockUtils::ClockError::SUCCESS;
 		if (ret) {
-			_testSocket->receiveCallback([this](std::vector<uint8_t> message, std::string ip, uint16_t port, clockUtils::ClockError err) {
+			_testSocket->receiveCallback([this](std::vector<uint8_t> message, std::string ip, uint16_t senderPort, clockUtils::ClockError err) {
 				if (err == clockUtils::ClockError::SUCCESS) {
 					if (_targetPort == 0) {
 						_targetIP = ip;
-						_targetPort = port;
+						_targetPort = senderPort;
 					}
 					std::string msg(message.begin(), message.end());
 					_helperReceiveCallback(QString::fromStdString(msg));

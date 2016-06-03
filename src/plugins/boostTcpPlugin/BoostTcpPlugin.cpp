@@ -59,7 +59,6 @@ namespace plugins {
 	}
 
 	void BoostTcpSocketPlugin::sendMessage(const QString & message) {
-		static int counter = 0;
 		std::string str = message.toStdString();
 		std::vector<uint8_t> v(str.begin(), str.end());
 
@@ -137,7 +136,6 @@ namespace plugins {
 			if (error) {
 				break;
 			} else {
-				static int counter = 0;
 				const char * m = boost::asio::buffer_cast<const char *>(buf.data());
 				std::string message(m, m + len - 5);
 				buf.consume(len);

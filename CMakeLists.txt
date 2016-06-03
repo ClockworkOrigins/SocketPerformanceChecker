@@ -219,10 +219,3 @@ IF(WIN32)
 
 	configure_file($ENV{Qt5_DIR}/plugins/platforms/qwindows.dll ${CMAKE_BINARY_DIR}/bin/plugins/platforms/qwindows.dll COPYONLY)
 ENDIF(WIN32)
-
-# set symlinks if it is an out-of-source-build
-IF(NOT ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
-	IF(UNIX)
-		execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/dependencies/${DEP_DIR_BUILD} ${CMAKE_BINARY_DIR}/dependencies/${DEP_DIR_BUILD})
-	ENDIF()
-ENDIF(NOT ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
