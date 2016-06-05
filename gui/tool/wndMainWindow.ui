@@ -45,6 +45,9 @@
         </property>
        </widget>
       </item>
+      <item row="5" column="0">
+       <layout class="QGridLayout" name="socketPluginLayout"/>
+      </item>
       <item row="4" column="0">
        <layout class="QGridLayout" name="gridLayout_2">
         <item row="4" column="2">
@@ -179,12 +182,6 @@
         </item>
        </layout>
       </item>
-      <item row="0" column="0">
-       <widget class="QTableView" name="resultTableView"/>
-      </item>
-      <item row="5" column="0">
-       <layout class="QVBoxLayout" name="socketPluginLayout"/>
-      </item>
       <item row="1" column="0">
        <widget class="QProgressBar" name="progressBar">
         <property name="value">
@@ -197,6 +194,9 @@
          <string>%v of %m (%p%)</string>
         </property>
        </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QTableView" name="resultTableView"/>
       </item>
      </layout>
     </item>

@@ -165,7 +165,6 @@ namespace widgets {
 		newItem->setCheckable(false);
 		newItem->setEditable(false);
 		newItem->setSelectable(false);
-		newItem->setEnabled(false);
 		model->setItem(rowCount, 0, newItem);
 
 		// second column: complete duration
@@ -173,7 +172,6 @@ namespace widgets {
 		newItem->setCheckable(false);
 		newItem->setEditable(false);
 		newItem->setSelectable(false);
-		newItem->setEnabled(false);
 		model->setItem(rowCount, 1, newItem);
 
 		// third column: average duration
@@ -181,7 +179,6 @@ namespace widgets {
 		newItem->setCheckable(false);
 		newItem->setEditable(false);
 		newItem->setSelectable(false);
-		newItem->setEnabled(false);
 		model->setItem(rowCount, 2, newItem);
 
 		// fourth column: minimum duration
@@ -189,7 +186,6 @@ namespace widgets {
 		newItem->setCheckable(false);
 		newItem->setEditable(false);
 		newItem->setSelectable(false);
-		newItem->setEnabled(false);
 		model->setItem(rowCount, 3, newItem);
 
 		// fifth column: maximum duration
@@ -197,7 +193,6 @@ namespace widgets {
 		newItem->setCheckable(false);
 		newItem->setEditable(false);
 		newItem->setSelectable(false);
-		newItem->setEnabled(false);
 		model->setItem(rowCount, 4, newItem);
 
 		// sixth column: runs
@@ -205,7 +200,6 @@ namespace widgets {
 		newItem->setCheckable(false);
 		newItem->setEditable(false);
 		newItem->setSelectable(false);
-		newItem->setEnabled(false);
 		model->setItem(rowCount, 5, newItem);
 
 		// seventh column: message count
@@ -213,7 +207,6 @@ namespace widgets {
 		newItem->setCheckable(false);
 		newItem->setEditable(false);
 		newItem->setSelectable(false);
-		newItem->setEnabled(false);
 		model->setItem(rowCount, 6, newItem);
 
 		// eighth column: payloadSize
@@ -221,7 +214,6 @@ namespace widgets {
 		newItem->setCheckable(false);
 		newItem->setEditable(false);
 		newItem->setSelectable(false);
-		newItem->setEnabled(false);
 		model->setItem(rowCount, 7, newItem);
 
 		resultTableView->sortByColumn(2, Qt::SortOrder::AscendingOrder);
@@ -276,8 +268,10 @@ namespace widgets {
 	}
 
 	void MainWindow::addSocketCheckboxes() {
+		uint32_t counter = 0;
 		for (auto sp : _socketPlugins) {
-			socketPluginLayout->addWidget(sp.second.second);
+			socketPluginLayout->addWidget(sp.second.second, counter / 3, counter % 3);
+			counter++;
 		}
 	}
 
