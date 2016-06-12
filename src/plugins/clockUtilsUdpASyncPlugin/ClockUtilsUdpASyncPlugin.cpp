@@ -64,7 +64,7 @@ namespace plugins {
 	}
 
 	void ClockUtilsUdpSocketPlugin::sendMessage(const QString & message) {
-		_testSocket->writePacketAsync(_targetIP, _targetPort, message.toStdString());
+		_testSocket->writePacketToIPAsync(_targetIP, _targetPort, message.toStdString());
 	}
 
 	bool ClockUtilsUdpSocketPlugin::waitForMessages(uint32_t messageCount, int32_t timeOut) {
