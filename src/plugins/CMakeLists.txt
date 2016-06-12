@@ -21,3 +21,7 @@ ADD_SUBDIRECTORY(clockUtilsTcpASyncPlugin)
 ADD_SUBDIRECTORY(clockUtilsTcpSyncPlugin)
 ADD_SUBDIRECTORY(clockUtilsUdpASyncPlugin)
 ADD_SUBDIRECTORY(clockUtilsUdpSyncPlugin)
+
+IF(WITH_M2ETIS)
+	ADD_SUBDIRECTORY(m2etisPlugin)
+ENDIF(WITH_M2ETIS)

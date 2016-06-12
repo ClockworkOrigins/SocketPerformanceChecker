@@ -27,6 +27,8 @@ cmake_minimum_required (VERSION 2.8.12)
 #
 #########################################################################
 
+OPTION(WITH_M2ETIS "Build m2etis and the m2etis plugin" OFF)
+
 project(SocketPerformanceChecker)
 
 IF(NOT CMAKE_BUILD_TYPE)
@@ -155,6 +157,37 @@ SET(LIBHEADER "clockUtils/errors.h")
 SET(CLOCKUTILS_ROOT ${SPC_DEP_DIR}/clockUtils)
 find_package(EasyFind REQUIRED COMPONENTS clock_sockets)
 include_directories(SYSTEM ${CLOCKUTILS_INCLUDE_DIR})
+
+#----------------------------------------------------
+# m2etis
+#----------------------------------------------------
+IF(WITH_M2ETIS)
+	# Build m2etis
+	IF(WIN32)
+		IF(CMAKE_GENERATOR MATCHES "Visual Studio 12")
+			SET(METIS_TOOLCHAIN msvc12)
+		ELSE()
+			MESSAGE([ERROR] "Generator not supported yet!")
+		ENDIF()
+		IF(CMAKE_GENERATOR MATCHES "Win64")
+			SET(METIS_ARCH 64)
+		ELSE(CMAKE_GENERATOR MATCHES "Win64")
+			SET(METIS_ARCH 32)
+		ENDIF(CMAKE_GENERATOR MATCHES "Win64")
+		execute_process(COMMAND ${CMAKE_SOURCE_DIR}/dependencies/build-m2etis.bat ${METIS_TOOLCHAIN} ${METIS_ARCH} "${SPC_DEP_DIR}/.." WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/dependencies)
+	ELSE(WIN32)
+		execute_process(COMMAND ${CMAKE_SOURCE_DIR}/dependencies/build-m2etis.sh "${CMAKE_BUILD_TYPE}" "${SPC_DEP_DIR}" WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/dependencies)
+	ENDIF(WIN32)
+
+	#----------------------------------------------------
+	# I6M2ETIS
+	#----------------------------------------------------
+	SET(LIBNAME "M2etis")
+	SET(LIBHEADER "m2etis/pubsub/PubSubSystem.h")
+	SET(M2etis_ROOT ${SPC_DEP_DIR}/m2etis)
+	find_package(EasyFind REQUIRED COMPONENTS m2etis)
+	include_directories(SYSTEM ${M2etis_INCLUDE_DIR})
+ENDIF(WITH_M2ETIS)
 
 #----------------------------------------------------
 # Qt
