@@ -1,7 +1,7 @@
 REM SocketPerformanceChecker
 REM Copyright (2016) Daniel Bonrath, Michael Baer, All rights reserved.
 REM
-REM This file is part of i6engine; i6engine is free software; you can redistribute it and/or
+REM This file is part of SocketPerformanceChecker; SocketPerformanceChecker is free software; you can redistribute it and/or
 REM modify it under the terms of the GNU Lesser General Public
 REM License as published by the Free Software Foundation; either
 REM version 2.1 of the License, or (at your option) any later version.
