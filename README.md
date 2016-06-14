@@ -77,6 +77,15 @@ cmake .
  * now you find a SocketPerformanceChecker.sln file you can open in Visual Studio. You can compile it using F7. After this, all library files
  * and the executables are in the bin subdirectory and you can run it
  * That's all
+ 
+##Running the Test##
+
+To run the test the following steps are necessary:
+
+ * Run the SocketPerformanceHelper executable on the PC you want it running
+ * Start SocketPerformanceChecker executable either on the same PC or on another one
+ * Configure the test as you want to run it. Remember to change the IP in the configuration to the one the SocketPerformanceHelper is running on
+ * Click the start button and wait for the results
 
 ## Contributing Code ##
 
