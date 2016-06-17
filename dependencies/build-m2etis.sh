@@ -25,8 +25,8 @@ ROOT_DIR=${2}
 . ./build-common.sh
 
 # M2etis
-ARCHIVE="m2etis-0.4.0-src-rev119.zip"
-BUILD_DIR="${BUILD_ROOT}/m2etis-0.4.0-src-rev119"
+ARCHIVE="m2etis-0.4.0-src-rev121.zip"
+BUILD_DIR="${BUILD_ROOT}/m2etis-0.4.0-src-rev121"
 
 PREFIX="${ROOT_DIR}/m2etis"
 DEBUG_FLAG="DEBUG"
