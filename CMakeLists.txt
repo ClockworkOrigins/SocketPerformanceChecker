@@ -76,7 +76,7 @@ ENDIF()
 
 # Setting current version
 SET(VERSION_MAJOR 0)
-SET(VERSION_MINOR 8)
+SET(VERSION_MINOR 9)
 SET(VERSION_PATCH 0)
 
 #########################################################################

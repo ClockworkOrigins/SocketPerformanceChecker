@@ -1,7 +1,7 @@
 # SocketPerformanceChecker
 # Copyright (2016) Daniel Bonrath, Michael Baer, All rights reserved.
 #
-# This file is part of i6engine; i6engine is free software; you can redistribute it and/or
+# This file is part of SocketPerformanceChecker; SocketPerformanceChecker is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
@@ -19,8 +19,8 @@ cd "$(readlink -f "$(dirname "${0}")")"
 
 . ./build-common.sh
 
-ARCHIVE="clockutils-0.5.0-src.zip"
-BUILD_DIR="${BUILD_ROOT}/clockutils-0.5.0-src"
+ARCHIVE="clockutils-1.0.0-src.zip"
+BUILD_DIR="${BUILD_ROOT}/clockutils-1.0.0-src"
 
 PREFIX="${DEP_DIR}/clockUtils"
 DEBUG_FLAG="DEBUG"
@@ -60,10 +60,11 @@ cmake -G 'Unix Makefiles'\
  -DCMAKE_BUILD_TYPE="${BUILD_TYPE}"\
  -DCMAKE_INSTALL_PREFIX="${PREFIX}"\
  -DWITH_TESTING=OFF\
- -DWITH_LIBRARY_COMPRESSION=OFF\
- -DWITH_LIBRARY_SOCKETS=ON\
- -DWITH_LIBRARY_INIPARSER=OFF\
  -DWITH_LIBRARY_ARGPARSER=OFF\
+ -DWITH_LIBRARY_COMPRESSION=OFF\
+ -DWITH_LIBRARY_CONTAINER=OFF\
+ -DWITH_LIBRARY_INIPARSER=OFF\
+ -DWITH_LIBRARY_SOCKETS=ON\
  -DCMAKE_CXX_COMPILER=g++\
  .
 

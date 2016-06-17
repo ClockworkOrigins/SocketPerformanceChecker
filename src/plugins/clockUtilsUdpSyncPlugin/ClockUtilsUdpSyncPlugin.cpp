@@ -2,7 +2,7 @@
  * SocketPerformanceTester
  * Copyright (2016) Daniel Bonrath, Michael Baer, All rights reserved.
  *
- * This file is part of i6engine; i6engine is free software; you can redistribute it and/or
+ * This file is part of SocketPerformanceTester; SocketPerformanceTester is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
@@ -38,8 +38,7 @@ namespace plugins {
 						_targetIP = ip;
 						_targetPort = senderPort;
 					}
-					std::string msg(message.begin(), message.end());
-					_helperReceiveCallback(QString::fromStdString(msg));
+					_helperReceiveCallback(QString::fromUtf8(reinterpret_cast<char *>(message.data()), message.size()));
 				}
 			});
 		}
@@ -64,7 +63,7 @@ namespace plugins {
 	}
 
 	void ClockUtilsUdpSocketPlugin::sendMessage(const QString & message) {
-		_testSocket->writePacket(_targetIP, _targetPort, message.toStdString());
+		_testSocket->writePacketToIP(_targetIP, _targetPort, message.toStdString());
 	}
 
 	bool ClockUtilsUdpSocketPlugin::waitForMessages(uint32_t messageCount, int32_t timeOut) {

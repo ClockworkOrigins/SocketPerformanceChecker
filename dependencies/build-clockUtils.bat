@@ -1,7 +1,7 @@
 REM SocketPerformanceChecker
 REM Copyright (2016) Daniel Bonrath, Michael Baer, All rights reserved.
 REM
-REM This file is part of i6engine; i6engine is free software; you can redistribute it and/or
+REM This file is part of SocketPerformanceChecker; SocketPerformanceChecker is free software; you can redistribute it and/or
 REM modify it under the terms of the GNU Lesser General Public
 REM License as published by the Free Software Foundation; either
 REM version 2.1 of the License, or (at your option) any later version.
@@ -17,8 +17,8 @@ REM Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  U
 
 call build-common.bat %1 %2
 
-Set ARCHIVE=clockutils-0.5.0-src.zip
-Set BUILD_DIR=%TMP_DIR%/clockutils-0.5.0-src
+Set ARCHIVE=clockutils-1.0.0-src.zip
+Set BUILD_DIR=%TMP_DIR%/clockutils-1.0.0-src
 Set PREFIX=%DEP_DIR%/%ARCH_DIR%/clockUtils/
 
 echo "Compile clockUtils"
@@ -28,7 +28,7 @@ call build-common.bat downloadAndUnpack %ARCHIVE% %BUILD_DIR% http://clockwork-o
 cd %BUILD_DIR%
 
 echo "Configuring clockUtils"
-cmake -DWITH_TESTING=OFF -DWITH_LIBRARY_COMPRESSION=OFF -DWITH_LIBRARY_SOCKETS=ON -DWITH_LIBRARY_INIPARSER=OFF -DWITH_LIBRARY_ARGPARSER=OFF -DCMAKE_INSTALL_PREFIX=%PREFIX% -G "%VSCOMPILER%%VSARCH%" .
+cmake -DWITH_TESTING=OFF -DWITH_LIBRARY_COMPRESSION=OFF -DWITH_LIBRARY_CONTAINER=OFF -DWITH_LIBRARY_SOCKETS=ON -DWITH_LIBRARY_INIPARSER=OFF -DWITH_LIBRARY_ARGPARSER=OFF -DCMAKE_INSTALL_PREFIX=%PREFIX% -G "%VSCOMPILER%%VSARCH%" .
 
 echo "Building clockUtils"
 MSBuild.exe clockUtils.sln /p:Configuration=Release > NUL

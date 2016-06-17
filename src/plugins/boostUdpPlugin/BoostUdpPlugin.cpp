@@ -2,7 +2,7 @@
  * SocketPerformanceTester
  * Copyright (2016) Daniel Bonrath, Michael Baer, All rights reserved.
  *
- * This file is part of i6engine; i6engine is free software; you can redistribute it and/or
+ * This file is part of SocketPerformanceTester; SocketPerformanceTester is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
@@ -112,7 +112,7 @@ namespace plugins {
 		for (size_t i = 0; i < len; i++) {
 			data[i] = _buffer[i];
 		}
-		std::string message(data.begin(), data.begin() + std::string::difference_type(len));
+		std::string message(reinterpret_cast<char *>(data.data()), std::string::difference_type(len));
 
 		if (_targetPort == 0) {
 			_targetIP = remoteEndpoint->address().to_string();
