@@ -112,7 +112,7 @@ namespace plugins {
 		for (size_t i = 0; i < len; i++) {
 			data[i] = _buffer[i];
 		}
-		std::string message(data.begin(), data.begin() + std::string::difference_type(len));
+		std::string message(reinterpret_cast<char *>(data.data()), std::string::difference_type(len));
 
 		if (_targetPort == 0) {
 			_targetIP = remoteEndpoint->address().to_string();

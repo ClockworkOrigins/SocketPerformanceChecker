@@ -38,8 +38,7 @@ namespace plugins {
 						_targetIP = ip;
 						_targetPort = senderPort;
 					}
-					std::string msg(message.begin(), message.end());
-					_helperReceiveCallback(QString::fromStdString(msg));
+					_helperReceiveCallback(QString::fromUtf8(reinterpret_cast<char *>(message.data()), message.size()));
 				}
 			});
 		}

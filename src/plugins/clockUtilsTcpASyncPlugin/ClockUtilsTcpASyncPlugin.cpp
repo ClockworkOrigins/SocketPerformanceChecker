@@ -36,8 +36,7 @@ namespace plugins {
 				_testSocket = socket;
 				_testSocket->receiveCallback([this](std::vector<uint8_t> message, clockUtils::sockets::TcpSocket *, clockUtils::ClockError err) {
 					if (err == clockUtils::ClockError::SUCCESS) {
-						std::string msg(message.begin(), message.end());
-						_helperReceiveCallback(QString::fromStdString(msg));
+						_helperReceiveCallback(QString::fromUtf8(reinterpret_cast<char *>(message.data()), message.size()));
 					}
 				});
 			}
