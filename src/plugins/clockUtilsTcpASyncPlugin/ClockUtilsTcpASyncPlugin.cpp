@@ -34,8 +34,8 @@ namespace plugins {
 		return _listenSocket->listen(port, 1, false, [this](clockUtils::sockets::TcpSocket * socket, clockUtils::ClockError err) {
 			if (err == clockUtils::ClockError::SUCCESS) {
 				_testSocket = socket;
-				_testSocket->receiveCallback([this](std::vector<uint8_t> message, clockUtils::sockets::TcpSocket *, clockUtils::ClockError err) {
-					if (err == clockUtils::ClockError::SUCCESS) {
+				_testSocket->receiveCallback([this](std::vector<uint8_t> message, clockUtils::sockets::TcpSocket *, clockUtils::ClockError receiveErr) {
+					if (receiveErr == clockUtils::ClockError::SUCCESS) {
 						_helperReceiveCallback(QString::fromUtf8(reinterpret_cast<char *>(message.data()), message.size()));
 					}
 				});
