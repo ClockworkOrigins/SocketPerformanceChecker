@@ -375,6 +375,9 @@ namespace widgets {
 		} else {
 			progressBar->show();
 		}
+		for (auto sp : _socketPlugins) {
+			sp.second.second->setEnabled(enabled);
+		}
 	}
 
 } /* namespace widgets */
