@@ -37,7 +37,7 @@ namespace plugins {
 		return true;
 	}
 
-	bool m2etisSocketPlugin::connect(const QString & ip, uint16_t port, const std::function<void(void)> & callback) {
+	bool m2etisSocketPlugin::connect(const QString &, uint16_t port, const std::function<void(void)> & callback) {
 		_pubSubSystem = new m2etis::pubsub::PubSubSystem("127.0.0.1", port + 1, "127.0.0.1", port, { "127.0.0.1" });
 		_pubSubSystem->subscribe(m2etis::pubsub::ChannelName::SPC_Direct_Null_Null_Null_Null_Null_Null_Null_String_TCP, *this);
 		_checkerReceiveCallback = callback;
