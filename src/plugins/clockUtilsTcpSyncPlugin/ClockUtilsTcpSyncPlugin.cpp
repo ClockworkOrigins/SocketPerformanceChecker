@@ -27,7 +27,7 @@ namespace plugins {
 	ClockUtilsTcpSocketPlugin::ClockUtilsTcpSocketPlugin() : _listenSocket(nullptr), _testSocket(nullptr), _helperReceiveCallback(), _checkerReceiveCallback(), _messageCounter(0), _conditionLock(), _conditionVariable() {
 	}
 
-	bool ClockUtilsTcpSocketPlugin::listen(uint16_t port, const std::function<void(QString)> & callback) {
+	bool ClockUtilsTcpSocketPlugin::listen(const QString &, uint16_t port, const std::function<void(QString)> & callback) {
 		_helperReceiveCallback = callback;
 		_listenSocket = new clockUtils::sockets::TcpSocket();
 		
@@ -43,7 +43,7 @@ namespace plugins {
 		}) == clockUtils::ClockError::SUCCESS;
 	}
 
-	bool ClockUtilsTcpSocketPlugin::connect(const QString & ip, uint16_t port, const std::function<void(void)> & callback) {
+	bool ClockUtilsTcpSocketPlugin::connect(const QString & ip, uint16_t port, const QString &, const std::function<void(void)> & callback) {
 		_checkerReceiveCallback = callback;
 		_testSocket = new clockUtils::sockets::TcpSocket();
 		bool ret = _testSocket->connectToIP(ip.toStdString(), port, 1000) == clockUtils::ClockError::SUCCESS;

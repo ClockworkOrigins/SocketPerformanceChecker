@@ -311,7 +311,7 @@ namespace widgets {
 				// received LISTENING from helper, so real test can start now
 				delete msg;
 				// connect to socket
-				if (!socketPlugin->connect(ip, port, std::bind(&MainWindow::receivedMessage, this))) {
+				if (!socketPlugin->connect(ip, port, QString::fromStdString(_controlSocket->getPublicIP()), std::bind(&MainWindow::receivedMessage, this))) {
 					emit addErrorMessageBox("Plugin can't connect.", "Failed to connect plugin: " + socketPlugin->getName() + "\n" + QString::number(3 - retries) + " retries left.");
 					emit updateProgress();
 					std::this_thread::sleep_for(std::chrono::milliseconds(500));

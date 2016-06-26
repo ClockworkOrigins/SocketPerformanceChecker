@@ -27,7 +27,7 @@ namespace plugins {
 	BoostUdpSocketPlugin::BoostUdpSocketPlugin() : _buffer(), _ioService(nullptr), _testSocket(nullptr), _helperReceiveCallback(), _checkerReceiveCallback(), _messageCounter(0), _conditionLock(), _conditionVariable(), _targetIP(), _targetPort(), _receiveThread(nullptr) {
 	}
 
-	bool BoostUdpSocketPlugin::listen(uint16_t port, const std::function<void(QString)> & callback) {
+	bool BoostUdpSocketPlugin::listen(const QString &, uint16_t port, const std::function<void(QString)> & callback) {
 		_helperReceiveCallback = callback;
 		_ioService = new boost::asio::io_service();
 		_ioService->run();
@@ -44,7 +44,7 @@ namespace plugins {
 		return true;
 	}
 
-	bool BoostUdpSocketPlugin::connect(const QString & ip, uint16_t port, const std::function<void(void)> & callback) {
+	bool BoostUdpSocketPlugin::connect(const QString & ip, uint16_t port, const QString &, const std::function<void(void)> & callback) {
 		_checkerReceiveCallback = callback;
 		_targetIP = ip.toStdString();
 		_targetPort = port + 1;

@@ -89,10 +89,11 @@ namespace plugins {
 		/**
 		 * \brief this methods starts a listen socket to listen to a port used by helper
 		 * this method must only return if an error occured or the socket is ready to receive messages
+		 * \param[in] ip the own ip of this node
 		 * \param[in] port the port this socket shall listen to
 		 * \param[in] callback callback to be called whenever a message is received from tester
 		 */
-		bool listen(uint16_t port, const std::function<void(QString)> & callback);
+		bool listen(const QString & ip, uint16_t port, const std::function<void(QString)> & callback);
 		
 		/**
 		 * \brief creates connection from SocketPerformanceTester to helper tool
@@ -100,7 +101,7 @@ namespace plugins {
 		 * \param[in] port the port the helper tool is listening on
 		 * \param[in] callback this callback is called for every received message to notify SocketPerformanceTester about a new message to update the GUI
 		 */
-		bool connect(const QString & ip, uint16_t port, const std::function<void(void)> & callback);
+		bool connect(const QString & ip, uint16_t port, const QString & ownIp, const std::function<void(void)> & callback);
 		
 		/**
 		 * \brief sends a message over the socket

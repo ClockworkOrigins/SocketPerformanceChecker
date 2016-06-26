@@ -31,14 +31,14 @@ namespace plugins {
 	m2etisSocketPlugin::m2etisSocketPlugin() : _pubSubSystem(nullptr), _helperReceiveCallback(), _checkerReceiveCallback(), _messageCounter(0), _conditionLock(), _conditionVariable() {
 	}
 
-	bool m2etisSocketPlugin::listen(uint16_t port, const std::function<void(QString)> & callback) {
-		_pubSubSystem = new m2etis::pubsub::PubSubSystem("127.0.0.1", port, "127.0.0.1", port, { "127.0.0.1" });
+	bool m2etisSocketPlugin::listen(const QString & ip, uint16_t port, const std::function<void(QString)> & callback) {
+		_pubSubSystem = new m2etis::pubsub::PubSubSystem(ip.toStdString(), port, ip.toStdString(), port, { ip.toStdString() });
 		_helperReceiveCallback = callback;
 		return true;
 	}
 
-	bool m2etisSocketPlugin::connect(const QString &, uint16_t port, const std::function<void(void)> & callback) {
-		_pubSubSystem = new m2etis::pubsub::PubSubSystem("127.0.0.1", port + 1, "127.0.0.1", port, { "127.0.0.1" });
+	bool m2etisSocketPlugin::connect(const QString & ip, uint16_t port, const QString & ownIp, const std::function<void(void)> & callback) {
+		_pubSubSystem = new m2etis::pubsub::PubSubSystem(ownIp.toStdString(), port + 1, ip.toStdString(), port, { ip.toStdString() });
 		_pubSubSystem->subscribe(m2etis::pubsub::ChannelName::SPC_Direct_Null_Null_Null_Null_Null_Null_Null_String_TCP, *this);
 		_checkerReceiveCallback = callback;
 		return true;

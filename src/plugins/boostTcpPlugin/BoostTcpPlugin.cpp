@@ -27,7 +27,7 @@ namespace plugins {
 	BoostTcpSocketPlugin::BoostTcpSocketPlugin() : _ioService(nullptr), _testSocket(nullptr), _helperReceiveCallback(), _checkerReceiveCallback(), _messageCounter(0), _conditionLock(), _conditionVariable(), _listenThread(nullptr), _receiveThread(nullptr) {
 	}
 
-	bool BoostTcpSocketPlugin::listen(uint16_t port, const std::function<void(QString)> & callback) {
+	bool BoostTcpSocketPlugin::listen(const QString &, uint16_t port, const std::function<void(QString)> & callback) {
 		_helperReceiveCallback = callback;
 		_ioService = new boost::asio::io_service();
 		_ioService->run();
@@ -43,7 +43,7 @@ namespace plugins {
 		return true;
 	}
 
-	bool BoostTcpSocketPlugin::connect(const QString & ip, uint16_t port, const std::function<void(void)> & callback) {
+	bool BoostTcpSocketPlugin::connect(const QString & ip, uint16_t port, const QString &, const std::function<void(void)> & callback) {
 		_checkerReceiveCallback = callback;
 		_ioService = new boost::asio::io_service();
 		_ioService->run();

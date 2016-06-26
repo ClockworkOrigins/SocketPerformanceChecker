@@ -68,7 +68,7 @@ namespace spc {
 		_controlSocket->receiveCallback(std::bind(&Helper::receivedControlMessage, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 	}
 
-	void Helper::receivedControlMessage(std::vector<uint8_t> message, clockUtils::sockets::TcpSocket *, clockUtils::ClockError err) {
+	void Helper::receivedControlMessage(std::vector<uint8_t> message, clockUtils::sockets::TcpSocket * socket, clockUtils::ClockError err) {
 		if (err != clockUtils::ClockError::SUCCESS) {
 			// if an error occured, close control socket and wait for a new connection
 			delete _controlSocket;
@@ -90,7 +90,7 @@ namespace spc {
 		_activePlugin = _socketPlugins[lopapm->pluginName];
 		uint16_t port = lopapm->port;
 		delete msg;
-		if (_activePlugin->listen(port, std::bind(&Helper::receivedTestMessage, this, std::placeholders::_1))) {
+		if (_activePlugin->listen(QString::fromStdString(socket->getPublicIP()), port, std::bind(&Helper::receivedTestMessage, this, std::placeholders::_1))) {
 			// no error during listen startup, so inform SocketPerformanceChecker about running helper
 			common::ListeningMessage lm;
 			_controlSocket->writePacket(lm.Serialize());
