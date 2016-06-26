@@ -48,6 +48,10 @@ if [ ! -z "${CLEAN}" ]; then
 	exit 0
 fi
 
+if [ -d ${PREFIX} ]; then
+	exit 0
+fi
+
 title "Compile Boost"
 
 ./download-dependency.sh ${ARCHIVE}
