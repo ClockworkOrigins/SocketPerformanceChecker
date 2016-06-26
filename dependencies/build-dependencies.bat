@@ -1,3 +1,5 @@
+@echo OFF
+
 REM SocketPerformanceChecker
 REM Copyright (2016) Daniel Bonrath, Michael Baer, All rights reserved.
 REM

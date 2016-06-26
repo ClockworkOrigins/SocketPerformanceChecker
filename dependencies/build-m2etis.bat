@@ -27,9 +27,9 @@ Set ARCHIVE=m2etis-0.4.0-src-rev121.zip
 Set BUILD_DIR=%cd%\tmp\m2etis-0.4.0-src-rev121
 Set PREFIX=%ROOT_DIR%/%ARCH_DIR%/m2etis
 
-echo "Compile m2etis"
-
 if exist %PREFIX% exit /b
+
+echo "Compile m2etis"
 
 call build-common.bat downloadAndUnpack %ARCHIVE% %BUILD_DIR% http://clockwork-origins.de/m2etis/downloads/
 

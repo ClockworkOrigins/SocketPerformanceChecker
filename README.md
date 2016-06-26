@@ -22,6 +22,18 @@ SocketPerformanceChecker has been tested on:
 
 We use CMake (2.8+) for the build system and a C++11 capable compiler such as g++ 4.9 or Visual Studio 13 (or higher). Also Qt 5.x is required for the GUI. Build scripts for all other dependencies are provided in the repository in the dependencies directory.
 
+It is also important to set some environment variables. Those are:
+
+**LINUX**
+
+ * Qt5_BaseDir: The path to the version of Qt you're using (e.g. /home/<user>/Qt/5.5)
+
+**WINDOWS**
+
+ * VS12: The path the folder containing vcvarsall.bat (e.g. C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC) if you want to build with Visual Studio 2012/2013
+ * VS14: The path the folder containing vcvarsall.bat (e.g. C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC) if you want to build with Visual Studio 2015
+ * Qt5_BaseDir: The path to the version of Qt you're using (e.g. C:\Qt\5.5)
+
 ## Building from source ##
 
 **LINUX**
