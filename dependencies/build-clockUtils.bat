@@ -35,13 +35,13 @@ echo "Configuring clockUtils"
 cmake -DWITH_TESTING=OFF -DWITH_LIBRARY_COMPRESSION=OFF -DWITH_LIBRARY_CONTAINER=OFF -DWITH_LIBRARY_SOCKETS=ON -DWITH_LIBRARY_INIPARSER=OFF -DWITH_LIBRARY_ARGPARSER=OFF -DCMAKE_INSTALL_PREFIX=%PREFIX% -G "%VSCOMPILER%%VSARCH%" .
 
 echo "Building clockUtils"
-MSBuild.exe clockUtils.sln /p:Configuration=Release > NUL
+MSBuild.exe clockUtils.sln /p:Configuration=RelWithDebInfo > NUL
 
 echo "Installing clockUtils"
-MSBuild.exe INSTALL.vcxproj /p:Configuration=Release > NUL
+MSBuild.exe INSTALL.vcxproj /p:Configuration=RelWithDebInfo > NUL
 
 
 echo "Cleaning up"
 cd %DEP_DIR%
-RD /S /Q "%BUILD_DIR%"
-RD /S /Q "%TMP_DIR%"
+REM RD /S /Q "%BUILD_DIR%"
+REM RD /S /Q "%TMP_DIR%"
