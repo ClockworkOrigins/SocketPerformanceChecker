@@ -27,7 +27,7 @@ set(toolSrc
 	${srcdir}/main.cpp
 
 	${srcdir}/widgets/MainWindow.cpp
-
+	
 	${CMAKE_SOURCE_DIR}/src/common/MessageStructs.cpp
 )
 

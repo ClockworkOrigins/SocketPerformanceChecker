@@ -36,10 +36,6 @@
 #include <QPluginLoader>
 #include <QStandardItemModel>
 
-#ifdef max
-	#undef max
-#endif
-
 namespace spc {
 namespace widgets {
 
