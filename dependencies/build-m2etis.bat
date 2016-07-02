@@ -45,11 +45,11 @@ cd %BUILD_DIR%
 cmake -DCMAKE_INSTALL_PREFIX=%PREFIX% -DCMAKE_BUILD_TYPE=Release -DDEP_DIR=%DEP_DIR%/%ARCH_DIR%/ -DWITH_TESTING=OFF -DWITH_SIM=OFF -DWITH_LOGGING=OFF -DWITH_MESSAGECOMPRESSION=OFF -G "%VSCOMPILER%%VSARCH%" .
 
 echo "Building m2etis"
-MSBuild.exe m2etis.sln /p:Configuration=RelWithDebInfo
+MSBuild.exe m2etis.sln /p:Configuration=Release
 
 echo "Installing m2etis"
-MSBuild.exe INSTALL.vcxproj /p:Configuration=RelWithDebInfo
+MSBuild.exe INSTALL.vcxproj /p:Configuration=Release
 
 echo "Cleaning up"
 cd %DEP_DIR%
-REM RD /S /Q "%BUILD_DIR%/.."
+RD /S /Q "%BUILD_DIR%/.."
