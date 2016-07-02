@@ -2,7 +2,6 @@
 set -evx
 env | sort
 
-cd ..
 mkdir build || true
 mkdir build/$SPC_TARGET || true
 cd build/$SPC_TARGET
