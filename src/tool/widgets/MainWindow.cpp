@@ -70,6 +70,7 @@ namespace widgets {
 		horizontalHeader.append("Avg. Duration in ms");
 		horizontalHeader.append("Min. Duration in ms");
 		horizontalHeader.append("Max. Duration in ms");
+		horizontalHeader.append("Throughput in messages per seconds");
 		horizontalHeader.append("Runs");
 		horizontalHeader.append("Message Count");
 		horizontalHeader.append("Payload Size in Bytes");
@@ -191,26 +192,33 @@ namespace widgets {
 		newItem->setSelectable(false);
 		model->setItem(rowCount, 4, newItem);
 
-		// sixth column: runs
-		newItem = new QStandardItem(QString::number(durations.size()));
+		// sixth column: throughput
+		newItem = new QStandardItem(QString::number(uint64_t(messageCountSpinBox->value() / (durationSum / double(durations.size()) / 1000000))));
 		newItem->setCheckable(false);
 		newItem->setEditable(false);
 		newItem->setSelectable(false);
 		model->setItem(rowCount, 5, newItem);
 
-		// seventh column: message count
-		newItem = new QStandardItem(QString::number(messageCountSpinBox->value()));
+		// seventh column: runs
+		newItem = new QStandardItem(QString::number(durations.size()));
 		newItem->setCheckable(false);
 		newItem->setEditable(false);
 		newItem->setSelectable(false);
 		model->setItem(rowCount, 6, newItem);
 
-		// eighth column: payloadSize
-		newItem = new QStandardItem(QString::number(payloadSizeSpinBox->value()));
+		// eighth column: message count
+		newItem = new QStandardItem(QString::number(messageCountSpinBox->value()));
 		newItem->setCheckable(false);
 		newItem->setEditable(false);
 		newItem->setSelectable(false);
 		model->setItem(rowCount, 7, newItem);
+
+		// ninth column: payloadSize
+		newItem = new QStandardItem(QString::number(payloadSizeSpinBox->value()));
+		newItem->setCheckable(false);
+		newItem->setEditable(false);
+		newItem->setSelectable(false);
+		model->setItem(rowCount, 8, newItem);
 
 		resultTableView->sortByColumn(2, Qt::SortOrder::AscendingOrder);
 	}

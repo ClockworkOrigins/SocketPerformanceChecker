@@ -144,7 +144,7 @@ ENDIF(UNIX)
 
 #----------------------------------------------------
 # Boost
-#---------------------------------------------------
+#----------------------------------------------------
 IF(WIN32)
 	execute_process(COMMAND ${CMAKE_SOURCE_DIR}/dependencies/build-boost.bat ${VS_TOOLCHAIN} ${VS_ARCH} WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/dependencies)
 ELSEIF(UNIX)
