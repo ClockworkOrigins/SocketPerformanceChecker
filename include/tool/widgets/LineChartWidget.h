@@ -39,6 +39,7 @@ namespace widgets {
 		void setXAxisText(QString text);
 		void setYAxisText(QString text);
 
+		void setXAxisStepWidth(int stepWidth);
 		void setYAxisStepWidth(int stepWidth);
 
 	private:
@@ -52,6 +53,7 @@ namespace widgets {
 		QString _xAxisText;
 		QString _yAxisText;
 
+		int _xAxisStepWidth;
 		int _yAxisStepWidth;
 
 		QRectF boundingRect() const override {

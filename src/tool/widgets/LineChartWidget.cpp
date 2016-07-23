@@ -25,7 +25,7 @@
 namespace spc {
 namespace widgets {
 
-	LineChartWidget::LineChartWidget(const std::vector<uint64_t> & durations) : QGraphicsItem(), _durations(durations), _boundingRect(), _xAxisText(), _yAxisText(), _yAxisStepWidth(5) {
+	LineChartWidget::LineChartWidget(const std::vector<uint64_t> & durations) : QGraphicsItem(), _durations(durations), _boundingRect(), _xAxisText(), _yAxisText(), _xAxisStepWidth(10), _yAxisStepWidth(5) {
 	}
 
 	LineChartWidget::~LineChartWidget() {
@@ -38,6 +38,11 @@ namespace widgets {
 
 	void LineChartWidget::setYAxisText(QString text) {
 		_yAxisText = text;
+		update();
+	}
+
+	void LineChartWidget::setXAxisStepWidth(int stepWidth) {
+		_xAxisStepWidth = stepWidth;
 		update();
 	}
 
@@ -122,8 +127,8 @@ namespace widgets {
 
 		QPen xMarkerPen(QBrush(QColor(0, 0, 0)), Qt::PenStyle::SolidLine);
 		xMarkerPen.setWidth(1);
-		for (int i = 0; i <= int(_durations.size() / 10); i++) {
-			QPointF xMarkerPoint(_durations.size() / 2.0 * -stepWidth + i * 10 * stepWidth, 0.0);
+		for (int i = 0; i <= _xAxisStepWidth; i++) {
+			QPointF xMarkerPoint(_durations.size() / 2.0 * -stepWidth + i * _durations.size() / _xAxisStepWidth * stepWidth, 0.0);
 			QPainterPath xMarkerPath = QPainterPath(xMarkerPoint + QPointF(0.0, -1.0));
 			xMarkerPath.lineTo(xMarkerPoint);
 			xMarkerPath.lineTo(xMarkerPoint + QPointF(0.0, 1.0));
@@ -133,7 +138,7 @@ namespace widgets {
 			bottomEdge = std::max(bottomEdge, (xMarkerPoint + QPointF(0.0, 1.0)).y());
 
 			QFont myFont;
-			QString str(QString::number(i * 10));
+			QString str(QString::number(i * _durations.size() / _xAxisStepWidth));
 
 			QFontMetrics fm(myFont);
 			int width = fm.width(str);
