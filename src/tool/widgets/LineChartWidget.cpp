@@ -50,6 +50,11 @@ namespace widgets {
 		if (_durations.empty()) {
 			return;
 		}
+		qreal leftEdge = 0.0;
+		qreal topEdge = 0.0;
+		qreal rightEdge = 0.0;
+		qreal bottomEdge = 0.0;
+
 		uint64_t minValue = UINT64_MAX;
 		uint64_t maxValue = 0;
 		uint64_t sum = 0;
@@ -63,6 +68,10 @@ namespace widgets {
 		std::vector<QPointF> points;
 		for (size_t i = 0; i < _durations.size(); i++) {
 			points.push_back(QPointF(_durations.size() / 2.0 * -stepWidth + i * stepWidth, -100.0 * (_durations[i] - minValue) / (maxValue - minValue)));
+			leftEdge = std::min(leftEdge, points.back().x());
+			rightEdge = std::max(rightEdge, points.back().x());
+			topEdge = std::min(topEdge, points.back().y());
+			bottomEdge = std::min(bottomEdge, points.back().y());
 		}
 		if (points.empty()) {
 			return;
@@ -76,11 +85,6 @@ namespace widgets {
 		pen.setWidth(1);
 		painter->setPen(pen);
 		painter->drawPath(path);
-
-		prepareGeometryChange();
-		_boundingRect = path.boundingRect();
-
-		scene()->setSceneRect(_boundingRect);
 
 		QPointF avgStartPoint(_durations.size() / 2.0 * -stepWidth, -100.0 * (sum / _durations.size() - minValue) / (maxValue - minValue));
 		QPointF avgEndPoint(_durations.size() / 2.0 * stepWidth, -100.0 * (sum / _durations.size() - minValue) / (maxValue - minValue));
@@ -101,6 +105,8 @@ namespace widgets {
 		painter->setPen(xPen);
 		painter->drawPath(xPath);
 
+		rightEdge = std::max(rightEdge, xEndPoint.x());
+
 		// arrow
 		QPainterPath xArrowPath(xEndPoint - QPointF(2.0, 2.0));
 		xArrowPath.lineTo(xEndPoint);
@@ -109,6 +115,8 @@ namespace widgets {
 		xArrowPen.setWidth(2);
 		painter->setPen(xArrowPen);
 		painter->drawPath(xArrowPath);
+
+		bottomEdge = std::max(bottomEdge, (xEndPoint + QPointF(-2.0, 2.0)).y());
 
 		// markers for x axis
 
@@ -122,13 +130,18 @@ namespace widgets {
 			painter->setPen(xMarkerPen);
 			painter->drawPath(xMarkerPath);
 
+			bottomEdge = std::max(bottomEdge, (xMarkerPoint + QPointF(0.0, 1.0)).y());
+
 			QFont myFont;
 			QString str(QString::number(i * 10));
 
 			QFontMetrics fm(myFont);
 			int width = fm.width(str);
+			int height = fm.height();
 
 			painter->drawText(xMarkerPoint + QPointF(-width * 0.5, 15.0), str);
+
+			bottomEdge = std::max(bottomEdge, (xMarkerPoint + QPointF(-width * 0.5, 15.0)).y() + height);
 		}
 
 		// label of the x axis
@@ -137,7 +150,10 @@ namespace widgets {
 
 			QFontMetrics fm(myFont);
 			int width = fm.width(_xAxisText);
+			int height = fm.height();
 			painter->drawText(QPointF(-width * 0.5, 30.0), _xAxisText);
+
+			bottomEdge = std::max(bottomEdge, (QPointF(-width * 0.5, 30.0)).y() + height);
 		}
 
 		// y axis
@@ -150,6 +166,8 @@ namespace widgets {
 		painter->setPen(yPen);
 		painter->drawPath(yPath);
 
+		topEdge = std::min(topEdge, -110.0);
+
 		// arrow
 		QPainterPath yArrowPath(yEndPoint + QPointF(-2.0, 2.0));
 		yArrowPath.lineTo(yEndPoint);
@@ -158,6 +176,8 @@ namespace widgets {
 		yArrowPen.setWidth(2);
 		painter->setPen(yArrowPen);
 		painter->drawPath(yArrowPath);
+
+		leftEdge = std::min(leftEdge, (yEndPoint + QPointF(-2.0, 2.0)).x());
 
 		// markers for y axis
 
@@ -172,6 +192,8 @@ namespace widgets {
 			painter->setPen(yMarkerPen);
 			painter->drawPath(yMarkerPath);
 
+			leftEdge = std::min(leftEdge, (yMarkerPoint + QPointF(-1.0, 0.0)).x());
+
 			QFont myFont;
 			QString str(QString::number(minValue + i * (maxValue - minValue) / _yAxisStepWidth));
 
@@ -181,6 +203,8 @@ namespace widgets {
 			maxWidth = std::max(maxWidth, width);
 
 			painter->drawText(yMarkerPoint + QPointF(-width - 3, height * 0.25), str);
+
+			leftEdge = std::min(leftEdge, (yMarkerPoint + QPointF(-width - 3, height * 0.25)).x());
 		}
 
 		// label of the x axis
@@ -191,6 +215,15 @@ namespace widgets {
 			int width = fm.width(_yAxisText);
 			int height = fm.height();
 			painter->drawText(QPointF(_durations.size() / 2.0 * -stepWidth - width - maxWidth - 3 - 5, -50.0 + height * 0.25), _yAxisText);
+
+			leftEdge = std::min(leftEdge, _durations.size() / 2.0 * -stepWidth - width - maxWidth - 3 - 5);
+		}
+
+		if (std::abs(_boundingRect.left() - leftEdge) > DBL_EPSILON || std::abs(_boundingRect.top() - topEdge) > DBL_EPSILON || std::abs(_boundingRect.right() - rightEdge) > DBL_EPSILON || std::abs(_boundingRect.bottom() - bottomEdge) > DBL_EPSILON) {
+			prepareGeometryChange();
+			_boundingRect = QRectF(QPointF(leftEdge, topEdge), QPointF(rightEdge, bottomEdge));
+
+			scene()->setSceneRect(_boundingRect);
 		}
 	}
 
