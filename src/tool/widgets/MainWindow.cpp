@@ -23,6 +23,8 @@
 
 #include "spcBuildSettings.h"
 
+#include "widgets/LineChartWidget.h"
+
 #include "MessageStructs.h"
 
 #include "plugins/SocketPluginInterface.h"
@@ -32,6 +34,7 @@
 #include <QCheckBox>
 #include <QCloseEvent>
 #include <QDir>
+#include <QGraphicsView>
 #include <QMessageBox>
 #include <QPluginLoader>
 #include <QStandardItemModel>
@@ -53,7 +56,7 @@ namespace widgets {
 		}
 	};
 
-	MainWindow::MainWindow(QMainWindow * par) : QMainWindow(par), _socketPlugins(), _completeMessageAmount(), _processedMessageAmount(0), _triggerUpdateThreshold(1), _controlSocket(nullptr) {
+	MainWindow::MainWindow(QMainWindow * par) : QMainWindow(par), _socketPlugins(), _completeMessageAmount(), _processedMessageAmount(0), _triggerUpdateThreshold(1), _controlSocket(nullptr), _lineChartGraphicsScene(nullptr), _lineChartWidget(nullptr), _lineChartGraphicsView(nullptr) {
 		setupUi(this);
 
 		setWindowIcon(QIcon(":/icon.png"));
@@ -81,6 +84,17 @@ namespace widgets {
 		resultTableView->resizeColumnsToContents();
 
 		resultTableView->setModel(model);
+
+		_lineChartGraphicsScene = new QGraphicsScene(this);
+		_lineChartGraphicsView = new QGraphicsView(_lineChartGraphicsScene);
+
+		_lineChartGraphicsView->hide();
+		_lineChartGraphicsView->setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
+		_lineChartGraphicsView->setCacheMode(QGraphicsView::CacheBackground);
+
+		_lineChartGraphicsView->setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing | QPainter::SmoothPixmapTransform);
+
+		lineChartLayout->addWidget(_lineChartGraphicsView);
 
 		loadPlugins();
 
@@ -155,6 +169,19 @@ namespace widgets {
 			}
 			durationSum += duration;
 		}
+
+		if (_lineChartWidget) {
+			_lineChartGraphicsScene->removeItem(_lineChartWidget);
+			delete _lineChartWidget;
+			_lineChartWidget = nullptr;
+		}
+		_lineChartWidget = new LineChartWidget(durations);
+		_lineChartWidget->setXAxisText("Run");
+		_lineChartWidget->setYAxisText("Duration in microseconds");
+		_lineChartGraphicsScene->addItem(_lineChartWidget);
+		_lineChartGraphicsView->show();
+		_lineChartGraphicsView->fitInView(_lineChartWidget);
+
 		QStandardItemModel * model = dynamic_cast<QStandardItemModel *>(resultTableView->model());
 		int rowCount = model->rowCount();
 		// first column: plugin name

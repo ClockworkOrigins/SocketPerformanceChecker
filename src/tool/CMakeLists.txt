@@ -25,7 +25,8 @@ INCLUDE_DIRECTORIES(SYSTEM ${CMAKE_CURRENT_BINARY_DIR})
 
 set(toolSrc
 	${srcdir}/main.cpp
-
+	
+	${srcdir}/widgets/LineChartWidget.cpp
 	${srcdir}/widgets/MainWindow.cpp
 	
 	${CMAKE_SOURCE_DIR}/src/common/MessageStructs.cpp
@@ -36,6 +37,7 @@ QT5_WRAP_UI(toolUI
 )
 
 QT5_WRAP_CPP(toolGuiHeader
+	${includedir}/widgets/LineChartWidget.h
 	${includedir}/widgets/MainWindow.h
 )
 

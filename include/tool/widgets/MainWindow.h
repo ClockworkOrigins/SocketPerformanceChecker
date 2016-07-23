@@ -39,6 +39,8 @@ namespace plugins {
 } /* namespace plugins */
 namespace widgets {
 
+	class LineChartWidget;
+
 	class MainWindow : public QMainWindow, public Ui::wndMainWindow {
 		Q_OBJECT
 
@@ -124,6 +126,21 @@ namespace widgets {
 		 * \brief socket used to handle basic control flow between SocketPerformanceChecker and SocketPerformanceHelper
 		 */
 		clockUtils::sockets::TcpSocket * _controlSocket;
+
+		/**
+		 * \brief graphics scene containing line chart
+		 */
+		QGraphicsScene * _lineChartGraphicsScene;
+
+		/**
+		 * \brief widget representing a line chart displaying all runs of current measurement with their timings
+		 */
+		LineChartWidget * _lineChartWidget;
+
+		/**
+		 * \brief graphics view to show charts
+		 */
+		QGraphicsView * _lineChartGraphicsView;
 
 		/**
 		 * \brief used to capture pressing 'x' to close Window or close Window using ALT + F4

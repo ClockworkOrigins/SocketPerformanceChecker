@@ -38,17 +38,17 @@
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="6" column="0">
+      <item row="7" column="0">
        <widget class="QPushButton" name="startButton">
         <property name="text">
          <string>Start</string>
         </property>
        </widget>
       </item>
-      <item row="5" column="0">
+      <item row="6" column="0">
        <layout class="QGridLayout" name="socketPluginLayout"/>
       </item>
-      <item row="4" column="0">
+      <item row="5" column="0">
        <layout class="QGridLayout" name="gridLayout_2">
         <item row="4" column="2">
          <widget class="QSpinBox" name="portSpinBox">
@@ -182,7 +182,7 @@
         </item>
        </layout>
       </item>
-      <item row="1" column="0">
+      <item row="2" column="0">
        <widget class="QProgressBar" name="progressBar">
         <property name="value">
          <number>0</number>
@@ -197,6 +197,9 @@
       </item>
       <item row="0" column="0">
        <widget class="QTableView" name="resultTableView"/>
+      </item>
+      <item row="1" column="0">
+       <layout class="QHBoxLayout" name="lineChartLayout"/>
       </item>
      </layout>
     </item>
