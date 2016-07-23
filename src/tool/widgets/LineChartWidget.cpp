@@ -69,6 +69,8 @@ namespace widgets {
 			maxValue = std::max(maxValue, *it);
 			sum += *it;
 		}
+		QPointF minPoint;
+		QPointF maxPoint;
 		qreal stepWidth = 1000 / _durations.size();
 		std::vector<QPointF> points;
 		for (size_t i = 0; i < _durations.size(); i++) {
@@ -77,6 +79,12 @@ namespace widgets {
 			rightEdge = std::max(rightEdge, points.back().x());
 			topEdge = std::min(topEdge, points.back().y());
 			bottomEdge = std::min(bottomEdge, points.back().y());
+			if (_durations[i] == minValue) {
+				minPoint = points.back();
+			}
+			if (_durations[i] == maxValue) {
+				maxPoint = points.back();
+			}
 		}
 		if (points.empty()) {
 			return;
@@ -222,6 +230,15 @@ namespace widgets {
 			painter->drawText(QPointF(_durations.size() / 2.0 * -stepWidth - width - maxWidth - 3 - 5, -50.0 + height * 0.25), _yAxisText);
 
 			leftEdge = std::min(leftEdge, _durations.size() / 2.0 * -stepWidth - width - maxWidth - 3 - 5);
+		}
+
+		// mark min and max value
+		{
+			QPen minMaxPen(QBrush(QColor(255, 0, 0)), Qt::PenStyle::SolidLine);
+			minMaxPen.setWidth(4);
+			painter->setPen(minMaxPen);
+			painter->drawPoint(minPoint);
+			painter->drawPoint(maxPoint);
 		}
 
 		if (std::abs(_boundingRect.left() - leftEdge) > DBL_EPSILON || std::abs(_boundingRect.top() - topEdge) > DBL_EPSILON || std::abs(_boundingRect.right() - rightEdge) > DBL_EPSILON || std::abs(_boundingRect.bottom() - bottomEdge) > DBL_EPSILON) {
