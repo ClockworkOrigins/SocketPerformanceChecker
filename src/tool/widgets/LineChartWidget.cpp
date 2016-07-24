@@ -101,12 +101,12 @@ namespace widgets {
 
 		QPointF avgStartPoint(_durations.size() / 2.0 * -stepWidth, -100.0 * (sum / _durations.size() - minValue) / (maxValue - minValue));
 		QPointF avgEndPoint(_durations.size() / 2.0 * stepWidth, -100.0 * (sum / _durations.size() - minValue) / (maxValue - minValue));
-		QPainterPath avgPath = QPainterPath(avgStartPoint);
-		avgPath.lineTo(avgEndPoint);
 		QPen avgPen(QBrush(QColor(0, 255, 0)), Qt::PenStyle::DashLine);
+		avgPen.setStyle(Qt::PenStyle::DashLine);
+		avgPen.setDashOffset(0.5);
 		avgPen.setWidth(1);
 		painter->setPen(avgPen);
-		painter->drawPath(avgPath);
+		painter->drawLine(avgStartPoint, avgEndPoint);
 
 		// x axis
 		QPointF xStartPoint(_durations.size() / 2.0 * -stepWidth, 0.0);
@@ -239,6 +239,76 @@ namespace widgets {
 			painter->setPen(minMaxPen);
 			painter->drawPoint(minPoint);
 			painter->drawPoint(maxPoint);
+		}
+
+		// key to clarify the lines
+		{
+			// basic rectangle
+			QPen keyPen(QBrush(QColor(235, 235, 235)), Qt::PenStyle::SolidLine);
+			keyPen.setWidth(1);
+			painter->setPen(keyPen);
+			QRectF keyRect(QPointF(_durations.size() / 2.0 * stepWidth - 150, -160), QPointF(_durations.size() / 2.0 * stepWidth, -110));
+			painter->drawRect(keyRect);
+			painter->fillRect(keyRect, QBrush(QColor(235, 235, 235)));
+
+			topEdge = std::min(topEdge, -160.0);
+
+			{
+				// value line
+				painter->setPen(pen);
+				painter->drawLine(QLine(QPoint(_durations.size() / 2.0 * stepWidth - 140, -150), QPoint(_durations.size() / 2.0 * stepWidth - 130, -150)));
+
+				QFont myFont;
+				QString str("Durations");
+
+				QFontMetrics fm(myFont);
+				int height = fm.height();
+				int width = fm.width(str);
+				maxWidth = std::max(maxWidth, width);
+
+				QPen textPen(QBrush(QColor(0, 0, 0)), Qt::PenStyle::SolidLine);
+				textPen.setWidth(1);
+				painter->setPen(textPen);
+				painter->drawText(QPointF(_durations.size() / 2.0 * stepWidth - 120, -150 + height * 0.25), str);
+			}
+			{
+				// value line
+				painter->setPen(avgPen);
+				painter->drawLine(QLine(QPoint(_durations.size() / 2.0 * stepWidth - 140, -135), QPoint(_durations.size() / 2.0 * stepWidth - 130, -135)));
+
+				QFont myFont;
+				QString str("Average Duration");
+
+				QFontMetrics fm(myFont);
+				int height = fm.height();
+				int width = fm.width(str);
+				maxWidth = std::max(maxWidth, width);
+
+				QPen textPen(QBrush(QColor(0, 0, 0)), Qt::PenStyle::SolidLine);
+				textPen.setWidth(1);
+				painter->setPen(textPen);
+				painter->drawText(QPointF(_durations.size() / 2.0 * stepWidth - 120, -135 + height * 0.25), str);
+			}
+			{
+				// value line
+				QPen minMaxPen(QBrush(QColor(255, 0, 0)), Qt::PenStyle::SolidLine);
+				minMaxPen.setWidth(4);
+				painter->setPen(minMaxPen);
+				painter->drawPoint(QPointF(_durations.size() / 2.0 * stepWidth - 140, -120));
+
+				QFont myFont;
+				QString str("Min/Max Duration");
+
+				QFontMetrics fm(myFont);
+				int height = fm.height();
+				int width = fm.width(str);
+				maxWidth = std::max(maxWidth, width);
+
+				QPen textPen(QBrush(QColor(0, 0, 0)), Qt::PenStyle::SolidLine);
+				textPen.setWidth(1);
+				painter->setPen(textPen);
+				painter->drawText(QPointF(_durations.size() / 2.0 * stepWidth - 120, -120 + height * 0.25), str);
+			}
 		}
 
 		if (std::abs(_boundingRect.left() - leftEdge) > DBL_EPSILON || std::abs(_boundingRect.top() - topEdge) > DBL_EPSILON || std::abs(_boundingRect.right() - rightEdge) > DBL_EPSILON || std::abs(_boundingRect.bottom() - bottomEdge) > DBL_EPSILON) {
