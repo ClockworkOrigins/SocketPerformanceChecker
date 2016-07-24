@@ -106,6 +106,11 @@ namespace widgets {
 		 */
 		void selectedRow(const QModelIndex & index);
 
+		/**
+		 * \brief called when header is of table is clicked to sort by column
+		 */
+		void selectedHeaderColumn(int columnIndex);
+
 	private:
 		/**
 		 * \brief stores all loaded SocketPlugins

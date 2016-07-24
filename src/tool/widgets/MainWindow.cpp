@@ -44,16 +44,19 @@ namespace widgets {
 
 	class QNumberStandardItem : public QStandardItem {
 	public:
-		QNumberStandardItem(QString text) : QStandardItem(text) {
+		QNumberStandardItem(int number) : QStandardItem(QString::number(number)), _number(number) {
 		}
 
 		bool operator<(const QStandardItem & other) const override {
-			return text().toInt() < other.text().toInt();
+			return _number < dynamic_cast<const QNumberStandardItem *>(&other)->_number;
 		}
 
 		int type() const override {
 			return UserType;
 		}
+
+	private:
+		int _number;
 	};
 
 	MainWindow::MainWindow(QMainWindow * par) : QMainWindow(par), _socketPlugins(), _completeMessageAmount(), _processedMessageAmount(0), _triggerUpdateThreshold(1), _controlSocket(nullptr), _lineChartGraphicsScene(nullptr), _lineChartWidget(nullptr), _lineChartGraphicsView(nullptr), _measuredDurations() {
@@ -79,6 +82,7 @@ namespace widgets {
 		horizontalHeader.append("Payload Size in Bytes");
 		model->setHorizontalHeaderLabels(horizontalHeader);
 		header->setModel(model);
+		header->setSectionsClickable(true);
 		resultTableView->setHorizontalHeader(header);
 		resultTableView->resizeRowsToContents();
 		resultTableView->resizeColumnsToContents();
@@ -107,6 +111,7 @@ namespace widgets {
 		connect(this, SIGNAL(finishedTest()), this, SLOT(testFinished()), Qt::QueuedConnection);
 		connect(this, SIGNAL(addErrorMessageBox(QString, QString)), this, SLOT(showErrorMessageBox(QString, QString)), Qt::QueuedConnection);
 		connect(resultTableView, SIGNAL(clicked(const QModelIndex &)), this, SLOT(selectedRow(const QModelIndex &)));
+		connect(header, SIGNAL(sectionClicked(int)), this, SLOT(selectedHeaderColumn(int)));
 	}
 
 	MainWindow::~MainWindow() {
@@ -184,56 +189,56 @@ namespace widgets {
 		model->setItem(rowCount, 0, newItem);
 
 		// second column: complete duration
-		newItem = new QStandardItem(QString::number(durationSum / 1000));
+		newItem = new QNumberStandardItem(durationSum / 1000);
 		newItem->setCheckable(false);
 		newItem->setEditable(false);
 		newItem->setSelectable(false);
 		model->setItem(rowCount, 1, newItem);
 
 		// third column: average duration
-		newItem = new QNumberStandardItem(QString::number(uint64_t(durationSum / double(durations.size()) / 1000)));
+		newItem = new QNumberStandardItem(uint64_t(durationSum / double(durations.size()) / 1000));
 		newItem->setCheckable(false);
 		newItem->setEditable(false);
 		newItem->setSelectable(false);
 		model->setItem(rowCount, 2, newItem);
 
 		// fourth column: minimum duration
-		newItem = new QStandardItem(QString::number(minimumDuration / 1000));
+		newItem = new QNumberStandardItem(minimumDuration / 1000);
 		newItem->setCheckable(false);
 		newItem->setEditable(false);
 		newItem->setSelectable(false);
 		model->setItem(rowCount, 3, newItem);
 
 		// fifth column: maximum duration
-		newItem = new QStandardItem(QString::number(maximumDuration / 1000));
+		newItem = new QNumberStandardItem(maximumDuration / 1000);
 		newItem->setCheckable(false);
 		newItem->setEditable(false);
 		newItem->setSelectable(false);
 		model->setItem(rowCount, 4, newItem);
 
 		// sixth column: throughput
-		newItem = new QStandardItem(QString::number(uint64_t(messageCountSpinBox->value() / (durationSum / double(durations.size()) / 1000000))));
+		newItem = new QNumberStandardItem(uint64_t(messageCountSpinBox->value() / (durationSum / double(durations.size()) / 1000000)));
 		newItem->setCheckable(false);
 		newItem->setEditable(false);
 		newItem->setSelectable(false);
 		model->setItem(rowCount, 5, newItem);
 
 		// seventh column: runs
-		newItem = new QStandardItem(QString::number(durations.size()));
+		newItem = new QNumberStandardItem(durations.size());
 		newItem->setCheckable(false);
 		newItem->setEditable(false);
 		newItem->setSelectable(false);
 		model->setItem(rowCount, 6, newItem);
 
 		// eighth column: message count
-		newItem = new QStandardItem(QString::number(messageCountSpinBox->value()));
+		newItem = new QNumberStandardItem(messageCountSpinBox->value());
 		newItem->setCheckable(false);
 		newItem->setEditable(false);
 		newItem->setSelectable(false);
 		model->setItem(rowCount, 7, newItem);
 
 		// ninth column: payloadSize
-		newItem = new QStandardItem(QString::number(payloadSizeSpinBox->value()));
+		newItem = new QNumberStandardItem(payloadSizeSpinBox->value());
 		newItem->setCheckable(false);
 		newItem->setEditable(false);
 		newItem->setSelectable(false);
@@ -273,6 +278,10 @@ namespace widgets {
 		_lineChartGraphicsScene->addItem(_lineChartWidget);
 		_lineChartGraphicsView->show();
 		_lineChartGraphicsView->fitInView(_lineChartWidget);
+	}
+
+	void MainWindow::selectedHeaderColumn(int columnIndex) {
+		resultTableView->sortByColumn(columnIndex);
 	}
 
 	void MainWindow::closeEvent(QCloseEvent * evt) {
