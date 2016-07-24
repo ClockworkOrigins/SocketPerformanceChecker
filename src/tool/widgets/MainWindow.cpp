@@ -56,7 +56,7 @@ namespace widgets {
 		}
 	};
 
-	MainWindow::MainWindow(QMainWindow * par) : QMainWindow(par), _socketPlugins(), _completeMessageAmount(), _processedMessageAmount(0), _triggerUpdateThreshold(1), _controlSocket(nullptr), _lineChartGraphicsScene(nullptr), _lineChartWidget(nullptr), _lineChartGraphicsView(nullptr) {
+	MainWindow::MainWindow(QMainWindow * par) : QMainWindow(par), _socketPlugins(), _completeMessageAmount(), _processedMessageAmount(0), _triggerUpdateThreshold(1), _controlSocket(nullptr), _lineChartGraphicsScene(nullptr), _lineChartWidget(nullptr), _lineChartGraphicsView(nullptr), _measuredDurations() {
 		setupUi(this);
 
 		setWindowIcon(QIcon(":/icon.png"));
@@ -106,6 +106,7 @@ namespace widgets {
 		connect(this, SIGNAL(updateProgress()), this, SLOT(updateProgressBar()), Qt::QueuedConnection);
 		connect(this, SIGNAL(finishedTest()), this, SLOT(testFinished()), Qt::QueuedConnection);
 		connect(this, SIGNAL(addErrorMessageBox(QString, QString)), this, SLOT(showErrorMessageBox(QString, QString)), Qt::QueuedConnection);
+		connect(resultTableView, SIGNAL(clicked(const QModelIndex &)), this, SLOT(selectedRow(const QModelIndex &)));
 	}
 
 	MainWindow::~MainWindow() {
@@ -131,6 +132,7 @@ namespace widgets {
 
 		_completeMessageAmount = socketList.size() * runs * messageCount;
 		_processedMessageAmount = 0;
+		_measuredDurations.clear();
 
 		if (_completeMessageAmount == 0) {
 			emit addErrorMessageBox("Can't start test.", "No socket implementations chosen to be tested. Starting test is stopped.");
@@ -170,17 +172,7 @@ namespace widgets {
 			durationSum += duration;
 		}
 
-		if (_lineChartWidget) {
-			_lineChartGraphicsScene->removeItem(_lineChartWidget);
-			delete _lineChartWidget;
-			_lineChartWidget = nullptr;
-		}
-		_lineChartWidget = new LineChartWidget(durations);
-		_lineChartWidget->setXAxisText("Run");
-		_lineChartWidget->setYAxisText("Duration in microseconds");
-		_lineChartGraphicsScene->addItem(_lineChartWidget);
-		_lineChartGraphicsView->show();
-		_lineChartGraphicsView->fitInView(_lineChartWidget);
+		_measuredDurations.insert(std::make_pair(pluginName, durations));
 
 		QStandardItemModel * model = dynamic_cast<QStandardItemModel *>(resultTableView->model());
 		int rowCount = model->rowCount();
@@ -264,6 +256,23 @@ namespace widgets {
 		box.setInformativeText(message);
 		box.setStandardButtons(QMessageBox::StandardButton::Ok);
 		box.exec();
+	}
+
+	void MainWindow::selectedRow(const QModelIndex & index) {
+		int idx = index.row();
+		QStandardItemModel * model = dynamic_cast<QStandardItemModel *>(resultTableView->model());
+
+		if (_lineChartWidget) {
+			_lineChartGraphicsScene->removeItem(_lineChartWidget);
+			delete _lineChartWidget;
+			_lineChartWidget = nullptr;
+		}
+		_lineChartWidget = new LineChartWidget(_measuredDurations[model->item(idx, 0)->text()]);
+		_lineChartWidget->setXAxisText("Run");
+		_lineChartWidget->setYAxisText("Duration in microseconds");
+		_lineChartGraphicsScene->addItem(_lineChartWidget);
+		_lineChartGraphicsView->show();
+		_lineChartGraphicsView->fitInView(_lineChartWidget);
 	}
 
 	void MainWindow::closeEvent(QCloseEvent * evt) {

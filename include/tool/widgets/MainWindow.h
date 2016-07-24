@@ -101,6 +101,11 @@ namespace widgets {
 		 */
 		void showErrorMessageBox(QString title, QString message) const;
 
+		/**
+		 * \brief called when a row in result table is selected
+		 */
+		void selectedRow(const QModelIndex & index);
+
 	private:
 		/**
 		 * \brief stores all loaded SocketPlugins
@@ -141,6 +146,11 @@ namespace widgets {
 		 * \brief graphics view to show charts
 		 */
 		QGraphicsView * _lineChartGraphicsView;
+
+		/**
+		 * \brief contains all measured values
+		 */
+		std::map<QString, std::vector<uint64_t>> _measuredDurations;
 
 		/**
 		 * \brief used to capture pressing 'x' to close Window or close Window using ALT + F4
