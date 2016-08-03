@@ -1,5 +1,6 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
 	<file alias="icon.png">../../../config/clockUtils_logo.png</file>
+	<file alias="logo.png">../../../config/ClockworkOrigins_Logo.png</file>
 </qresource>
 </RCC>

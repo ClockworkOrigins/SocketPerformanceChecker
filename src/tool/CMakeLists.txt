@@ -26,6 +26,7 @@ INCLUDE_DIRECTORIES(SYSTEM ${CMAKE_CURRENT_BINARY_DIR})
 set(toolSrc
 	${srcdir}/main.cpp
 	
+	${srcdir}/widgets/AboutDialog.cpp
 	${srcdir}/widgets/LineChartWidget.cpp
 	${srcdir}/widgets/MainWindow.cpp
 	
@@ -37,6 +38,7 @@ QT5_WRAP_UI(toolUI
 )
 
 QT5_WRAP_CPP(toolGuiHeader
+	${includedir}/widgets/AboutDialog.h
 	${includedir}/widgets/LineChartWidget.h
 	${includedir}/widgets/MainWindow.h
 )
@@ -67,3 +69,5 @@ ENDIF(UNIX)
 IF(WIN32)
 	add_custom_command(TARGET SocketPerformanceChecker POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_BINARY_DIR}/bin/$<CONFIGURATION>/SocketPerformanceChecker.exe ${CMAKE_BINARY_DIR}/bin)
 ENDIF(WIN32)
+
+configure_file("${CMAKE_SOURCE_DIR}/copyright/Qt LICENSE" "${CMAKE_BINARY_DIR}/copyright/Qt LICENSE" COPYONLY)

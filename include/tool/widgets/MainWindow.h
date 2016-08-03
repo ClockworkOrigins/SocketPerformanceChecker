@@ -39,6 +39,7 @@ namespace plugins {
 } /* namespace plugins */
 namespace widgets {
 
+	class AboutDialog;
 	class LineChartWidget;
 
 	class MainWindow : public QMainWindow, public Ui::wndMainWindow {
@@ -74,6 +75,11 @@ namespace widgets {
 		 * \brief shuts test down
 		 */
 		void closeTool();
+
+		/**
+		 * \brief opens about dialog
+		 */
+		void showAboutDialog();
 
 		/**
 		 * \brief starts the configured test
@@ -156,6 +162,11 @@ namespace widgets {
 		 * \brief contains all measured values
 		 */
 		std::map<QString, std::vector<uint64_t>> _measuredDurations;
+
+		/**
+		 * \brief about dialog
+		 */
+		AboutDialog * _aboutDialog;
 
 		/**
 		 * \brief used to capture pressing 'x' to close Window or close Window using ALT + F4
