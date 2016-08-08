@@ -60,7 +60,7 @@ namespace widgets {
 		int _number;
 	};
 
-	MainWindow::MainWindow(QMainWindow * par) : QMainWindow(par), _socketPlugins(), _completeMessageAmount(), _processedMessageAmount(0), _triggerUpdateThreshold(1), _controlSocket(nullptr), _lineChartGraphicsScene(nullptr), _lineChartWidget(nullptr), _lineChartGraphicsView(nullptr), _measuredDurations(), _aboutDialog(new AboutDialog(this)) {
+	MainWindow::MainWindow(QMainWindow * par) : QMainWindow(par), _socketPlugins(), _completeMessageAmount(), _processedMessageAmount(0), _triggerUpdateThreshold(1), _controlSocket(nullptr), _lineChartGraphicsScene(nullptr), _lineChartWidget(nullptr), _lineChartGraphicsView(nullptr), _measuredDurations(), _aboutDialog(new AboutDialog(this)), _abort(false) {
 		setupUi(this);
 
 		setWindowIcon(QIcon(":/icon.png"));
@@ -68,6 +68,7 @@ namespace widgets {
 		setWindowTitle(QString("SocketPerformanceChecker (v ") + QString::number(SPC_VERSION_MAJOR) + QString(".") + QString::number(SPC_VERSION_MINOR) + QString(".") + QString::number(SPC_VERSION_PATCH) + QString(")"));
 
 		progressBar->hide();
+		abortButton->hide();
 
 		QHeaderView * header = new QHeaderView(Qt::Orientation::Horizontal, resultTableView);
 		QStandardItemModel * model = new QStandardItemModel(header);
@@ -128,6 +129,7 @@ namespace widgets {
 	}
 
 	void MainWindow::startTest() {
+		_abort = false;
 		QString ip = ipLineEdit->text();
 		uint16_t port = uint16_t(portSpinBox->value());
 		QStringList socketList;
@@ -166,6 +168,10 @@ namespace widgets {
 		_controlSocket = nullptr;
 
 		std::thread(std::bind(&MainWindow::performTest, this, ip, port, socketList, runs, messageCount, payloadSize)).detach();
+	}
+
+	void MainWindow::abortTest() {
+		_abort = true;
 	}
 
 	void MainWindow::updateSocketResults(QString pluginName, std::vector<uint64_t> durations) {
@@ -339,6 +345,9 @@ namespace widgets {
 		}
 		uint32_t pluginCounter = 0;
 		for (QString socketPluginName : socketList) {
+			if (_abort) {
+				break;
+			}
 			std::vector<uint64_t> durations;
 			plugins::SocketPluginInterface * socketPlugin = _socketPlugins[socketPluginName].first;
 			uint8_t retries = 1;
@@ -378,8 +387,11 @@ namespace widgets {
 				// start time measuring
 				std::chrono::time_point<std::chrono::high_resolution_clock> startTime = std::chrono::high_resolution_clock::now();
 				// send all messages
-				for (uint32_t j = 0; j < messageCount; j++) {
+				for (uint32_t j = 0; j < messageCount && !_abort; j++) {
 					socketPlugin->sendMessage(message);
+				}
+				if (_abort) {
+					break;
 				}
 				// wait until all messages are echoed or timeout is reached
 				bool b = socketPlugin->waitForMessages(messageCount, 10000);
@@ -423,11 +435,14 @@ namespace widgets {
 		payloadSizeSpinBox->setEnabled(enabled);
 		ipLineEdit->setEnabled(enabled);
 		portSpinBox->setEnabled(enabled);
-		startButton->setEnabled(enabled);
 		if (enabled) {
 			progressBar->hide();
+			abortButton->hide();
+			startButton->show();
 		} else {
 			progressBar->show();
+			abortButton->show();
+			startButton->hide();
 		}
 		for (auto sp : _socketPlugins) {
 			sp.second.second->setEnabled(enabled);

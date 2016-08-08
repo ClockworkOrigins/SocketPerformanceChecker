@@ -38,6 +38,9 @@
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
      <layout class="QGridLayout" name="gridLayout">
+      <item row="6" column="0">
+       <layout class="QGridLayout" name="socketPluginLayout"/>
+      </item>
       <item row="7" column="0">
        <widget class="QPushButton" name="startButton">
         <property name="text">
@@ -45,8 +48,18 @@
         </property>
        </widget>
       </item>
-      <item row="6" column="0">
-       <layout class="QGridLayout" name="socketPluginLayout"/>
+      <item row="2" column="0">
+       <widget class="QProgressBar" name="progressBar">
+        <property name="value">
+         <number>0</number>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+        </property>
+        <property name="format">
+         <string>%v of %m (%p%)</string>
+        </property>
+       </widget>
       </item>
       <item row="5" column="0">
        <layout class="QGridLayout" name="gridLayout_2">
@@ -182,24 +195,18 @@
         </item>
        </layout>
       </item>
-      <item row="2" column="0">
-       <widget class="QProgressBar" name="progressBar">
-        <property name="value">
-         <number>0</number>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignJustify|Qt::AlignVCenter</set>
-        </property>
-        <property name="format">
-         <string>%v of %m (%p%)</string>
-        </property>
-       </widget>
+      <item row="1" column="0">
+       <layout class="QHBoxLayout" name="lineChartLayout"/>
       </item>
       <item row="0" column="0">
        <widget class="QTableView" name="resultTableView"/>
       </item>
-      <item row="1" column="0">
-       <layout class="QHBoxLayout" name="lineChartLayout"/>
+      <item row="8" column="0">
+       <widget class="QPushButton" name="abortButton">
+        <property name="text">
+         <string>Abort</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>
@@ -311,10 +318,27 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>abortButton</sender>
+   <signal>clicked()</signal>
+   <receiver>wndMainWindow</receiver>
+   <slot>abortTest()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>309</x>
+     <y>390</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>309</x>
+     <y>205</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>closeTool()</slot>
   <slot>startTest()</slot>
   <slot>showAboutDialog()</slot>
+  <slot>abortTest()</slot>
  </slots>
 </ui>

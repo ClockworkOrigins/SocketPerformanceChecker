@@ -87,6 +87,11 @@ namespace widgets {
 		void startTest();
 
 		/**
+		 * \brief aborts the currently running test
+		 */
+		void abortTest();
+
+		/**
 		 * \brief called when a socket was updated in Qt thread, so now GUI can be updated
 		 */
 		void updateSocketResults(QString pluginName, std::vector<uint64_t> durations);
@@ -167,6 +172,11 @@ namespace widgets {
 		 * \brief about dialog
 		 */
 		AboutDialog * _aboutDialog;
+
+		/**
+		 * \brief stores whether current job shall be aborted or not
+		 */
+		bool _abort;
 
 		/**
 		 * \brief used to capture pressing 'x' to close Window or close Window using ALT + F4
