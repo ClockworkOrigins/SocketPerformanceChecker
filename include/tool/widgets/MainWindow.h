@@ -26,6 +26,8 @@
 #include <cstdint>
 
 class QCheckBox;
+class QGraphicsScene;
+class QGraphicsView;
 
 namespace clockUtils {
 namespace sockets {
