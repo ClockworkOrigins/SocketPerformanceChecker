@@ -98,7 +98,7 @@ namespace plugins {
 		/**
 		 * \brief returns the name of the plugin as shown in the GUI and used to identify the plugin
 		 */
-		QString getName() const {
+		QString getName() const override {
 			return "Qt Udp";
 		}
 

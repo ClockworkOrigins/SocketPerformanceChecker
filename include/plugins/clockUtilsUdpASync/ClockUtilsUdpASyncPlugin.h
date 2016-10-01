@@ -88,7 +88,7 @@ namespace plugins {
 		/**
 		 * \brief returns the name of the plugin as shown in the GUI and used to identify the plugin
 		 */
-		QString getName() const {
+		QString getName() const override {
 			return "clockUtils Udp Async";
 		}
 
@@ -98,7 +98,7 @@ namespace plugins {
 		 * \param[in] port the port this socket shall listen to
 		 * \param[in] callback callback to be called whenever a message is received from tester
 		 */
-		bool listen(const QString & ip, uint16_t port, const std::function<void(QString)> & callback);
+		bool listen(const QString & ip, uint16_t port, const std::function<void(QString)> & callback) override;
 		
 		/**
 		 * \brief creates connection from SocketPerformanceTester to helper tool
@@ -106,25 +106,25 @@ namespace plugins {
 		 * \param[in] port the port the helper tool is listening on
 		 * \param[in] callback this callback is called for every received message to notify SocketPerformanceTester about a new message to update the GUI
 		 */
-		bool connect(const QString & ip, uint16_t port, const QString & ownIp, const std::function<void(void)> & callback);
+		bool connect(const QString & ip, uint16_t port, const QString & ownIp, const std::function<void(void)> & callback) override;
 		
 		/**
 		 * \brief sends a message over the socket
 		 * \param[in] message the message to be sent
 		 */
-		void sendMessage(const QString & message);
+		void sendMessage(const QString & message) override;
 
 		/**
 		 * \brief blocks until either the amount of messages specified or the timeout limit is reached
 		 * \param[in] messageCount the amount of messages to wait for
 		 * \param[in] timeOut the duration in milliseconds to wait for or -1 to wait an infinite time
 		 */
-		bool waitForMessages(uint32_t messageCount, int32_t timeOut);
+		bool waitForMessages(uint32_t messageCount, int32_t timeOut) override;
 
 		/**
 		 * \brief disconnects this plugin, has to be set to base state to be able to create a clean new connection
 		 */
-		void disconnect();
+		void disconnect() override;
 	};
 
 } /* namespace plugins */
