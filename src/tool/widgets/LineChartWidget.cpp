@@ -19,6 +19,8 @@
 
 #include "widgets/LineChartWidget.h"
 
+#include <cfloat>
+
 #include <QGraphicsScene>
 #include <QPainter>
 
