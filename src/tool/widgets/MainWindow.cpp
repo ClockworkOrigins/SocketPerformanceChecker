@@ -37,6 +37,7 @@
 #include <QDir>
 #include <QGraphicsView>
 #include <QMessageBox>
+#include <QFileDialog>
 #include <QPluginLoader>
 #include <QStandardItemModel>
 
@@ -102,6 +103,8 @@ namespace widgets {
 
 		lineChartLayout->addWidget(_lineChartGraphicsView);
 
+		actionExport_result->setDisabled(true);
+
 		loadPlugins();
 
 		addSocketCheckboxes();
@@ -145,6 +148,8 @@ namespace widgets {
 		_completeMessageAmount = socketList.size() * runs * messageCount;
 		_processedMessageAmount = 0;
 		_measuredDurations.clear();
+
+		actionExport_result->setDisabled(true);
 
 		if (_completeMessageAmount == 0) {
 			emit addErrorMessageBox("Can't start test.", "No socket implementations chosen to be tested. Starting test is stopped.");
@@ -293,6 +298,44 @@ namespace widgets {
 
 	void MainWindow::selectedHeaderColumn(int columnIndex) {
 		resultTableView->sortByColumn(columnIndex);
+	}
+
+	void MainWindow::exportResult() {
+		QString filename = QFileDialog::getSaveFileName(this, "Export results", ".", "Comma-separated values (*.csv)");
+		if (!filename.isEmpty()) {
+			QFileInfo info(filename);
+			if (info.suffix() != "csv") {
+				filename += ".csv";
+			}
+			QFile output(filename);
+			if (output.open(QIODevice::WriteOnly)) {
+				std::vector<std::vector<std::string>> table;
+				size_t maxLength = 0;
+				for (auto p : _measuredDurations) {
+					std::vector<std::string> column;
+					column.push_back(p.first.toStdString());
+					for (uint64_t v : p.second) {
+						column.push_back(std::to_string(v));
+					}
+					table.push_back(column);
+					maxLength = std::max(maxLength, p.second.size());
+				}
+
+				for (size_t i = 0; i < maxLength + 1; i++) { // +1 because label also contained
+					std::string line;
+					for (size_t j = 0; j < table.size(); j++) {
+						if (table[j].size() >= i) {
+							line += table[j][i];
+						}
+						if (j < table[j].size() - 1) {
+							line += ";";
+						}
+					}
+					output.write(line.c_str(), line.length());
+					output.write("\n");
+				}
+			}
+		}
 	}
 
 	void MainWindow::closeEvent(QCloseEvent * evt) {
@@ -447,6 +490,8 @@ namespace widgets {
 		for (auto sp : _socketPlugins) {
 			sp.second.second->setEnabled(enabled);
 		}
+
+		actionExport_result->setEnabled(enabled && !_measuredDurations.empty());
 	}
 
 } /* namespace widgets */

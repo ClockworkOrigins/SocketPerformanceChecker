@@ -218,13 +218,15 @@
      <x>0</x>
      <y>0</y>
      <width>620</width>
-     <height>21</height>
+     <height>10</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="actionExport_result"/>
+    <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -265,6 +267,11 @@
   <action name="actionAbout">
    <property name="text">
     <string>About</string>
+   </property>
+  </action>
+  <action name="actionExport_result">
+   <property name="text">
+    <string>Export result</string>
    </property>
   </action>
  </widget>
@@ -334,11 +341,28 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionExport_result</sender>
+   <signal>triggered()</signal>
+   <receiver>wndMainWindow</receiver>
+   <slot>exportResult()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>309</x>
+     <y>205</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>closeTool()</slot>
   <slot>startTest()</slot>
   <slot>showAboutDialog()</slot>
   <slot>abortTest()</slot>
+  <slot>exportResult()</slot>
  </slots>
 </ui>

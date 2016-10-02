@@ -124,6 +124,11 @@ namespace widgets {
 		 */
 		void selectedHeaderColumn(int columnIndex);
 
+		/**
+		 * \brief opens file dialog to select output csv file to export results into
+		 */
+		void exportResult();
+
 	private:
 		/**
 		 * \brief stores all loaded SocketPlugins
