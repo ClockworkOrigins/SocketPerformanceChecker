@@ -1,21 +1,4 @@
-# easyFind version 1.1 - 17.10.2014 - # 010
-
-# SocketPerformanceChecker
-# Copyright (2016) Daniel Bonrath, Michael Baer, All rights reserved.
-#
-# This file is part of SocketPerformanceChecker; SocketPerformanceChecker is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public
-# License as published by the Free Software Foundation; either
-# version 2.1 of the License, or (at your option) any later version.
-#
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this library; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+# easyFind version 1.2 - 21.10.2016 - # 011
 
 # Find $LIBNAME includes and library
 #
@@ -74,7 +57,7 @@ ENDIF (NOT EasyFind_FIND_QUIETLY)
 	IF (${LIBNAME}_notFoundList)
 		SET (${LIBNAME}_FOUND FALSE)
 		IF (${EasyFind_FIND_REQUIRED})
-			message(SEND_ERROR "${LIBNAME} marked as required, but not all components were found.")
+			message(FATAL_ERROR "${LIBNAME} marked as required, but not all components were found.")
 		ELSE (${EasyFind_FIND_REQUIRED})
 			message(WARNING "Not all components were found. Continuing anyways")
 		ENDIF (${EasyFind_FIND_REQUIRED})
@@ -97,7 +80,7 @@ ENDIF (NOT EasyFind_FIND_QUIETLY)
 	ELSE (${LIBNAME}_HEADER)
 		SET (${LIBNAME}_FOUND FALSE)
 		IF (${EasyFind_FIND_REQUIRED})
-			message(SEND_ERROR "${LIBNAME} marked as required but header not found")
+			message(FATAL_ERROR "${LIBNAME} marked as required but header not found")
 		ELSE (${EasyFind_FIND_REQUIRED})
 			IF (NOT ${LIBNAME}_FIND_QUIETLY)
 				message(WARNING "${LIBNAME} header not found")
